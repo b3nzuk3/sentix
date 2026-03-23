@@ -1,0 +1,26 @@
+{
+  "name": "@sentix/worker",
+  "version": "0.1.0",
+  "main": "dist/worker.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx watch src/worker.ts",
+    "start": "node dist/worker.js",
+    "lint": "eslint src/",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "bullmq": "^5.0.0",
+    "ioredis": "^5.0.0",
+    "pino": "^8.0.0",
+    "pino-pretty": "^8.0.0",
+    "@sentix/core": "workspace:*",
+    "@sentix/prompts": "workspace:*",
+    "@sentix/queue": "workspace:*"
+  },
+  "devDependencies": {
+    "tsx": "^4.0.0",
+    "typescript": "^5.0.0",
+    "@types/node": "^20.0.0"
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "name": "@sentix/api",
+  "version": "0.1.0",
+  "main": "dist/server.js",
+  "prisma": {
+    "schema": "../../prisma/schema.prisma"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx watch src/server.ts",
+    "start": "node dist/server.js",
+    "lint": "eslint src/",
+    "typecheck": "tsc --noEmit",
+    "prisma": "prisma"
+  },
+  "dependencies": {
+    "fastify": "^5.0.0",
+    "fastify-plugin": "^4.0.0",
+    "fastify-cors": "^6.1.0",
+    "@fastify/rate-limit": "^8.0.0",
+    "@fastify/jwt": "^7.0.0",
+    "@fastify/helmet": "^11.0.0",
+    "@fastify/websocket": "^8.0.0",
+    "@prisma/client": "^5.0.0",
+    "zod": "^3.22.0",
+    "bcrypt": "^5.1.0",
+    "ioredis": "^5.0.0",
+    "bullmq": "^5.0.0",
+    "pino": "^8.0.0",
+    "pino-pretty": "^8.0.0"
+  },
+  "devDependencies": {
+    "prisma": "^5.0.0",
+    "tsx": "^4.0.0",
+    "@types/bcrypt": "^5.0.0",
+    "@sentix/types": "workspace:*",
+    "@sentix/core": "workspace:*",
+    "@sentix/prompts": "workspace:*",
+    "@sentix/queue": "workspace:*"
+  }
+}

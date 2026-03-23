@@ -1,0 +1,224 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Organization {
+  id              String   @id @default(cuid())
+  name            String
+  slug            String   @unique
+  settings        Json?    // { retention_days: number, timezone: string, i18n: { locales: string[] } }
+  created_at      DateTime @default(now())
+
+  teams           Team[]
+  projects        Project[]
+  users           User[]
+}
+
+model Team {
+  id              String   @id @default(cuid())
+  name            String
+  organization_id String
+  organization    Organization @relation(fields: [organization_id], references: [id])
+  projects        Project[]
+  members         UserTeam[]
+  created_at      DateTime @default(now())
+}
+
+model User {
+  id              String   @id @default(cuid())
+  email           String   @unique
+  name            String?
+  password_hash   String
+  organization_id String
+  organization    Organization @relation(fields: [organization_id], references: [id])
+  teams           UserTeam[]
+  role            UserRole @default(MEMBER)
+  created_at      DateTime @default(now())
+}
+
+model UserTeam {
+  user_id         String
+  team_id         String
+  role            TeamRole @default(MEMBER)
+  joined_at       DateTime @default(now())
+
+  user            User     @relation(fields: [user_id], references: [id])
+  team            Team     @relation(fields: [team_id], references: [id])
+
+  @@id([user_id, team_id])
+}
+
+model Project {
+  id              String   @id @default(cuid())
+  name            String
+  description     String?
+  organization_id String
+  organization    Organization @relation(fields: [organization_id], references: [id])
+  team_id         String?
+  team            Team?     @relation(fields: [team_id], references: [id])
+  signals         Signal[]
+  themes          Theme[]   // Manually created themes
+  analyses        Analysis[]
+  decisions       Decision[]
+  personas        Persona[]
+  architectureComponents ArchitectureComponent[]
+  created_at      DateTime @default(now())
+}
+
+model Signal {
+  id              String   @id @default(cuid())
+  project_id      String
+  project         Project  @relation(fields: [project_id], references: [id])
+  source_type     SignalSource
+  text            String   @db.Text
+  account_name    String?
+  signal_type     SignalCategory?
+  metadata        Json?
+  created_at      DateTime @default(now())
+
+  @@index([project_id, created_at])
+  @@index([account_name])
+}
+
+model Theme {
+  id              String   @id @default(cuid())
+  project_id      String
+  project         Project  @relation(fields: [project_id], references: [id])
+  title           String
+  summary         String?
+  confidence      Float?
+  analyses        AnalysisTheme[]  // Links from analyses
+  created_at      DateTime @default(now())
+
+  @@index([project_id, confidence])
+}
+
+model Analysis {
+  id                  String   @id @default(cuid())
+  project_id          String
+  project             Project  @relation(fields: [project_id], references: [id])
+  status              AnalysisStatus @default(PENDING)
+  total_revenue_lost  Float?
+  total_revenue_at_risk Float?
+  error_message       String?
+  created_at          DateTime @default(now())
+  updated_at          DateTime @updatedAt
+
+  themes              AnalysisTheme[]
+}
+
+model AnalysisTheme {
+  id                  String   @id @default(cuid())
+  analysis_id         String
+  analysis            Analysis  @relation(fields: [analysis_id], references: [id])
+  theme_id            String
+  theme               Theme     @relation(fields: [theme_id], references: [id])
+  title               String
+  roadmap_bucket      RoadmapBucket
+  revenue_lost        Float?
+  revenue_at_risk     Float?
+  churn_probability  Float?
+  effort_days         Int?
+  effort_bucket       EffortBucket?
+  confidence          Float
+  evidence_ids        Json?
+  engine_outputs      Json?
+  created_at          DateTime @default(now())
+}
+
+model Decision {
+  id              String   @id @default(cuid())
+  project_id      String
+  project         Project  @relation(fields: [project_id], references: [id])
+  title           String
+  description     String?
+  created_at      DateTime @default(now())
+}
+
+model Persona {
+  id              String   @id @default(cuid())
+  project_id      String
+  project         Project  @relation(fields: [project_id], references: [id])
+  name            String
+  description     String   @db.Text
+  created_at      DateTime @default(now())
+
+  @@index([project_id])
+}
+
+model ArchitectureComponent {
+  id              String   @id @default(cuid())
+  project_id      String
+  project         Project  @relation(fields: [project_id], references: [id])
+  name            String
+  description     String?  @db.Text
+  version         String?
+  status          ComponentStatus @default(STABLE)
+  created_at      DateTime @default(now())
+
+  @@index([project_id, status])
+}
+
+// Enums
+enum UserRole {
+  ADMIN
+  MEMBER
+  VIEWER
+}
+
+enum TeamRole {
+  ADMIN
+  MEMBER
+  VIEWER
+}
+
+enum SignalSource {
+  TRANSCRIPT
+  SLACK
+  HUBSPOT
+  ZENDESK
+  JIRA
+  MANUAL
+}
+
+enum SignalCategory {
+  COMPLAINT
+  FEATURE_REQUEST
+  BUG
+  QUESTION
+  PRAISE
+}
+
+enum RoadmapBucket {
+  NOW
+  NEXT
+  LATER
+}
+
+enum EffortBucket {
+  HIGH
+  MEDIUM
+  LOW
+}
+
+enum AnalysisStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+enum ComponentStatus {
+  PLANNING
+  IN_DEVELOPMENT
+  STABLE
+  DEPRECATED
+}
