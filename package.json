@@ -1,0 +1,35 @@
+{
+  "name": "sentix",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev --parallel",
+    "lint": "turbo run lint",
+    "test": "turbo run test",
+    "typecheck": "turbo run typecheck",
+    "clean": "turbo clean && rm -rf node_modules",
+    "db:push": "pnpm --filter @sentix/api prisma db push",
+    "db:seed": "pnpm --filter @sentix/api prisma db seed"
+  },
+  "devDependencies": {
+    "turbo": "^2.0.0",
+    "typescript": "^5.0.0",
+    "prettier": "^3.0.0",
+    "eslint": "^8.0.0",
+    "@types/node": "^20.0.0",
+    "husky": "^9.0.0",
+    "lint-staged": "^15.0.0",
+    "@eslint/eslintrc": "^3.0.0",
+    "@typescript-eslint/eslint-plugin": "^7.0.0",
+    "@typescript-eslint/parser": "^7.0.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-prettier": "^4.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
