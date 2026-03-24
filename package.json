@@ -13,8 +13,8 @@
     "test": "turbo run test",
     "typecheck": "turbo run typecheck",
     "clean": "turbo clean && rm -rf node_modules",
-    "db:push": "pnpm --filter @sentix/api prisma db push",
-    "db:seed": "pnpm --filter @sentix/api run db:seed",
+    "db:push": "pnpm --filter @sentix/api db:push",
+    "db:seed": "pnpm --filter @sentix/api db:seed",
     "prepare": "husky"
   },
   "devDependencies": {

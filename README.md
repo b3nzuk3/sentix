@@ -55,35 +55,45 @@ cd infra/docker
 docker-compose up -d
 ```
 
-5. **Initialize database**
+5. **Initialize database** (generates Prisma client & migrations)
 
 ```bash
 pnpm db:push
 ```
 
-6. **Seed demo data** (optional)
+6. **Seed demo data** (optional - creates test project, user, signals)
 
 ```bash
-cd apps/api
 pnpm db:seed
 ```
 
-7. **Start development servers**
+7. **Start development servers** (3 separate terminals)
 
 ```bash
-# Terminal 1: API server
+# Terminal 1: API server (port 3001)
 pnpm --filter @sentix/api dev
 
-# Terminal 2: Worker
+# Terminal 2: Worker (background process)
 pnpm --filter @sentix/worker dev
 
-# Terminal 3: Web app
+# Terminal 3: Web app (port 3000)
 pnpm --filter @sentix/web dev
 ```
 
-8. **Open the app**
+8. **Access the app**
 
-Navigate to http://localhost:3000
+Open http://localhost:3000 in your browser.
+
+**First login** (if you ran the seed):
+
+- Email: `demo@sentix.ai`
+- Password: Check `apps/api/prisma/seed.ts` for the seeded password hash (you'll need to register a new account or modify the seed to set a known password)
+
+**Setup API key**: The worker requires an OpenRouter API key. Add it to your `.env` file:
+
+```env
+OPENROUTER_API_KEY=your-key-here
+```
 
 ## Project Structure
 
@@ -91,6 +101,7 @@ Navigate to http://localhost:3000
 sentix/
 ├── apps/
 │   ├── api/           # Fastify backend API
+│   │   └── prisma/    # Database schema & seed (per-app location)
 │   ├── web/           # Next.js frontend
 │   └── worker/        # BullMQ worker service
 ├── packages/
@@ -99,10 +110,11 @@ sentix/
 │   ├── queue/         # BullMQ queue definitions
 │   ├── types/         # Shared TypeScript types
 │   └── ui/            # Shared UI components (@sentix/ui)
-├── prisma/            # Database schema and seed
 ├── infra/             # Docker compose and deployment
 └── docs/              # Specifications and documentation
 ```
+
+**Note:** The Prisma schema is located in `apps/api/prisma/` (not root). This follows the pattern of each app managing its own dependencies.
 
 ## Architecture
 
