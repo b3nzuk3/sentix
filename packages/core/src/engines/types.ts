@@ -1,0 +1,32 @@
+export type SignalSource = string; // TODO: tighten to union type
+export type SignalCategory = string; // TODO: tighten to union type
+
+export interface Signal {
+  id: string;
+  text: string;
+  account_name?: string;
+  created_at: Date;
+  project_id: string;
+  source_type: SignalSource;
+  signal_type?: SignalCategory;
+  metadata?: Record<string, any>;
+}
+
+export interface RevenueResult {
+  total_lost: number;
+  at_risk: number;
+}
+
+export interface ChurnResult {
+  risk: number; // 0-1
+}
+
+export interface EffortResult {
+  bucket: 'HIGH' | 'MEDIUM' | 'LOW';
+  estimate: number; // days
+}
+
+export interface PriorityResult {
+  bucket: 'NOW' | 'NEXT' | 'LATER';
+  confidence: number; // 0-1
+}

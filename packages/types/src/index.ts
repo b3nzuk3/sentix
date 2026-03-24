@@ -1,2 +1,2 @@
-// Re-export Prisma client types
-export * from '@prisma/client';
+// Shared types will be added here as needed
+// For now, this package is a placeholder

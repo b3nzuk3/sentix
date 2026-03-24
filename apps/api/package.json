@@ -1,6 +1,7 @@
 {
   "name": "@sentix/api",
   "version": "0.1.0",
+  "type": "module",
   "main": "dist/server.js",
   "prisma": {
     "schema": "../../prisma/schema.prisma"
@@ -11,31 +12,43 @@
     "start": "node dist/server.js",
     "lint": "eslint src/",
     "typecheck": "tsc --noEmit",
+    "test": "playwright test",
     "prisma": "prisma"
   },
   "dependencies": {
-    "fastify": "^5.0.0",
-    "fastify-plugin": "^4.0.0",
-    "fastify-cors": "^6.1.0",
-    "@fastify/rate-limit": "^8.0.0",
-    "@fastify/jwt": "^7.0.0",
-    "@fastify/helmet": "^11.0.0",
-    "@fastify/websocket": "^8.0.0",
-    "@prisma/client": "^5.0.0",
-    "zod": "^3.22.0",
-    "bcrypt": "^5.1.0",
-    "ioredis": "^5.0.0",
+    "@fastify/cors": "^8.5.0",
+    "@fastify/helmet": "^10.1.1",
+    "@fastify/jwt": "^6.7.1",
+    "@fastify/multipart": "^8.0.0",
+    "@fastify/rate-limit": "^7.6.0",
+    "@fastify/websocket": "^5.0.1",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/multer": "^2.1.0",
+    "bcryptjs": "^3.0.3",
     "bullmq": "^5.0.0",
+    "dotenv": "^17.3.1",
+    "fastify": "^4.29.1",
+    "fastify-plugin": "^5.1.0",
+    "ioredis": "^5.0.0",
+    "jsonwebtoken": "^9.0.3",
     "pino": "^8.0.0",
-    "pino-pretty": "^8.0.0"
+    "pino-pretty": "^8.0.0",
+    "uuid": "^13.0.0",
+    "zod": "^3.22.0"
   },
   "devDependencies": {
-    "prisma": "^5.0.0",
-    "tsx": "^4.0.0",
-    "@types/bcrypt": "^5.0.0",
-    "@sentix/types": "workspace:*",
+    "@playwright/test": "^1.58.0",
+    "@prisma/client": "^5.22.0",
     "@sentix/core": "workspace:*",
     "@sentix/prompts": "workspace:*",
-    "@sentix/queue": "workspace:*"
+    "@sentix/queue": "workspace:*",
+    "@sentix/types": "workspace:*",
+    "@types/bcrypt": "^5.0.0",
+    "@types/jest": "^29.5.0",
+    "jest": "^29.7.0",
+    "jest-environment-node": "^29.7.0",
+    "prisma": "^5.22.0",
+    "ts-jest": "^29.1.0",
+    "tsx": "^4.0.0"
   }
 }
