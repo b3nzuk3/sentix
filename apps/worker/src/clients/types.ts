@@ -11,19 +11,8 @@ export interface OpenRouterResponse {
   }>;
 }
 
-export interface ExtractionContext {
-  project: {
-    name: string;
-    description: string;
-  };
-  signals: Array<{
-    id: string;
-    text: string;
-    source: string;
-    account?: string;
-  }>;
-  existing_themes?: any[];
-  past_decisions?: any[];
-  personas?: any[];
-  architectureComponents?: any[];
+import type { Context as PromptContext } from '@sentix/prompts';
+
+export interface ExtractionContext extends PromptContext {
+  existing_themes?: unknown[];
 }

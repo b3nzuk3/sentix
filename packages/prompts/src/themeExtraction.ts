@@ -1,5 +1,5 @@
 // Simple template renderer for the theme extraction prompt
-interface Context {
+export interface Context {
   project: { name: string; description: string };
   signals: Array<{ id: string; text: string; source: string; account_name?: string }>;
   personas?: Array<{ name: string; description: string }>;

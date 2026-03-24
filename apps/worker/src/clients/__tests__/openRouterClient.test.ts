@@ -347,7 +347,7 @@ describe('OpenRouterClient', () => {
     abortSpy.mockRestore();
   });
 
-  it('timeout cleanup: abort controller is aborted on JSON parse error', async () => {
+  it('should not abort controller when response parsing fails', async () => {
     jest.useFakeTimers();
     const abortSpy = jest.spyOn(AbortController.prototype, 'abort');
 
