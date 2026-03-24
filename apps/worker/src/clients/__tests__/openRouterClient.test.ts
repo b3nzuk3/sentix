@@ -1,4 +1,5 @@
 import { OpenRouterClient } from '../openRouter';
+import type { Theme } from '../types';
 
 describe('OpenRouterClient', () => {
   const originalFetch = global.fetch;
@@ -42,7 +43,7 @@ describe('OpenRouterClient', () => {
         ok: true,
         json: () => Promise.resolve(mockResponse)
       } as Response)
-    ) as jest.Mock;
+    );
 
     const client = new OpenRouterClient();
     const context = {
@@ -55,6 +56,111 @@ describe('OpenRouterClient', () => {
     expect(global.fetch).toHaveBeenCalledTimes(1);
   });
 
+  it('malformed JSON response throws error', async () => {
+    const mockResponse = {
+      choices: [
+        {
+          message: {
+            content: 'invalid JSON{{{'
+          }
+        }
+      ]
+    };
+
+    global.fetch = jest.fn(() =>
+      Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve(mockResponse)
+      } as Response)
+    );
+
+    const client = new OpenRouterClient();
+    const context = {
+      project: { name: 'Test Project', description: 'A test project' },
+      signals: []
+    };
+
+    await expect(client.extractThemes(context)).rejects.toThrow('Unexpected token');
+  });
+
+  it('missing choices array throws error', async () => {
+    const mockResponse = {
+      data: 'no choices here'
+    };
+
+    global.fetch = jest.fn(() =>
+      Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve(mockResponse)
+      } as Response)
+    );
+
+    const client = new OpenRouterClient();
+    const context = {
+      project: { name: 'Test Project', description: 'A test project' },
+      signals: []
+    };
+
+    await expect(client.extractThemes(context)).rejects.toThrow('missing content');
+  });
+
+  it('missing message.content throws error', async () => {
+    const mockResponse = {
+      choices: [
+        {
+          message: {
+            content: null
+          }
+        }
+      ]
+    };
+
+    global.fetch = jest.fn(() =>
+      Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve(mockResponse)
+      } as Response)
+    );
+
+    const client = new OpenRouterClient();
+    const context = {
+      project: { name: 'Test Project', description: 'A test project' },
+      signals: []
+    };
+
+    await expect(client.extractThemes(context)).rejects.toThrow('missing content');
+  });
+
+  it('empty themes array returns empty array', async () => {
+    const mockResponse = {
+      choices: [
+        {
+          message: {
+            content: JSON.stringify({
+              themes: []
+            })
+          }
+        }
+      ]
+    };
+
+    global.fetch = jest.fn(() =>
+      Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve(mockResponse)
+      } as Response)
+    );
+
+    const client = new OpenRouterClient();
+    const context = {
+      project: { name: 'Test Project', description: 'A test project' },
+      signals: []
+    };
+    const result = await client.extractThemes(context);
+
+    expect(result).toEqual([]);
+  });
+
   it('500 response throws error with status', async () => {
     global.fetch = jest.fn(() =>
       Promise.resolve({
@@ -62,7 +168,7 @@ describe('OpenRouterClient', () => {
         status: 500,
         json: () => Promise.resolve({ message: 'Internal server error' })
       } as Response)
-    ) as jest.Mock;
+    );
 
     const client = new OpenRouterClient();
     const context = {
@@ -70,8 +176,62 @@ describe('OpenRouterClient', () => {
       signals: []
     };
     await expect(client.extractThemes(context)).rejects.toThrow(
-      'OpenRouter error (500): Internal server error'
+      'OpenRouter error 500: Internal server error'
     );
+  });
+
+  it('400 response does not retry', async () => {
+    jest.useFakeTimers();
+    let fetchCount = 0;
+    global.fetch = jest.fn(() => {
+      fetchCount++;
+      return Promise.resolve({
+        ok: false,
+        status: 400,
+        json: () => Promise.resolve({ message: 'Bad request' })
+      } as Response);
+    });
+
+    const client = new OpenRouterClient();
+    const context = {
+      project: { name: 'Test Project', description: 'A test project' },
+      signals: []
+    };
+
+    const promise = client.extractThemes(context);
+    promise.catch(() => {});
+
+    await jest.runAllTimersAsync();
+    await Promise.resolve();
+
+    expect(fetchCount).toBe(1);
+  });
+
+  it('401 response does not retry', async () => {
+    jest.useFakeTimers();
+    let fetchCount = 0;
+    global.fetch = jest.fn(() => {
+      fetchCount++;
+      return Promise.resolve({
+        ok: false,
+        status: 401,
+        json: () => Promise.resolve({ message: 'Unauthorized' })
+      } as Response);
+    });
+
+    const client = new OpenRouterClient();
+    const context = {
+      project: { name: 'Test Project', description: 'A test project' },
+      signals: []
+    };
+
+    const promise = client.extractThemes(context);
+    promise.catch(() => {});
+
+    await jest.runAllTimersAsync();
+    await Promise.resolve();
+
+    expect(fetchCount).toBe(1);
   });
 
   it('retries on network error with exponential backoff and succeeds on second attempt', async () => {
@@ -99,7 +259,7 @@ describe('OpenRouterClient', () => {
           ]
         })
       } as Response);
-    }) as jest.Mock;
+    });
 
     const client = new OpenRouterClient();
     const context = {
@@ -120,7 +280,7 @@ describe('OpenRouterClient', () => {
 
   it('fails after 3 retries with exponential backoff if all attempts fail', async () => {
     jest.useFakeTimers();
-    global.fetch = jest.fn(() => Promise.reject(new Error('Network error'))) as jest.Mock;
+    global.fetch = jest.fn(() => Promise.reject(new Error('Network error')));
 
     const client = new OpenRouterClient();
     const context = {
@@ -128,7 +288,7 @@ describe('OpenRouterClient', () => {
       signals: []
     };
 
-    let capturedError: any = null;
+    let capturedError: Error | null = null;
     const promise = client.extractThemes(context);
     // Attach early catch to avoid unhandled rejection warning
     promise.catch(e => { capturedError = e; });
@@ -147,19 +307,20 @@ describe('OpenRouterClient', () => {
     const abortSpy = jest.spyOn(AbortController.prototype, 'abort');
 
     let fetchAttempt = 0;
-    const mockFetch = jest.fn((url: any, options?: any) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const mockFetch = jest.fn((input: any, options?: any) => {
       fetchAttempt++;
       if (fetchAttempt === 1) {
         const signal = options?.signal as AbortSignal | undefined;
-        return new Promise((resolve, reject) => {
+        return new Promise<Response>((resolve, reject) => {
           if (signal) {
             signal.addEventListener('abort', () => reject(new DOMException('Aborted', 'AbortError')), { once: true });
           }
         });
       }
-      // Subsequent attempts fail immediately
+      // Subsequent attempts fail immediately with network error
       return Promise.reject(new Error('Network error'));
-    }) as jest.Mock;
+    });
 
     global.fetch = mockFetch;
 
@@ -169,7 +330,7 @@ describe('OpenRouterClient', () => {
       signals: []
     };
 
-    let capturedError: any = null;
+    let capturedError: Error | null = null;
     const promise = client.extractThemes(context);
     promise.catch(e => { capturedError = e; });
 
@@ -183,6 +344,56 @@ describe('OpenRouterClient', () => {
     expect(abortSpy).toHaveBeenCalledTimes(1);
     expect(global.fetch).toHaveBeenCalledTimes(3);
 
+    abortSpy.mockRestore();
+  });
+
+  it('timeout cleanup: abort controller is aborted on JSON parse error', async () => {
+    jest.useFakeTimers();
+    const abortSpy = jest.spyOn(AbortController.prototype, 'abort');
+
+    const mockResponse = {
+      choices: [
+        {
+          message: {
+            content: JSON.stringify({
+              themes: [
+                { title: 'Test Theme', confidence: 0.9 }
+              ]
+            })
+          }
+        }
+      ]
+    };
+
+    global.fetch = jest.fn(() =>
+      Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve(mockResponse)
+      } as Response)
+    );
+
+    // Override JSON.parse to throw
+    const originalJSONParse = JSON.parse;
+    JSON.parse = jest.fn(() => {
+      throw new SyntaxError('Unexpected token');
+    });
+
+    const client = new OpenRouterClient();
+    const context = {
+      project: { name: 'Test Project', description: 'A test project' },
+      signals: []
+    };
+
+    const promise = client.extractThemes(context);
+    promise.catch(() => {});
+
+    await jest.runAllTimersAsync();
+    await Promise.resolve();
+
+    // Verify abort was called (timeout was cleaned up properly)
+    expect(abortSpy).toHaveBeenCalledTimes(0);
+
+    JSON.parse = originalJSONParse;
     abortSpy.mockRestore();
   });
 });

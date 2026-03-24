@@ -2,6 +2,12 @@
  * OpenRouter AI Client for theme extraction
  */
 import { themeExtractionPrompt } from '@sentix/prompts';
+import type { Theme, OpenRouterResponse, ExtractionContext } from './types';
+
+const MAX_RETRIES = 3;
+const TIMEOUT_MS = 30000;
+const BASE_DELAY = 1000;
+const MAX_DELAY = 30000;
 
 export class OpenRouterClient {
   private apiKey: string;
@@ -21,12 +27,12 @@ export class OpenRouterClient {
   /**
    * Extract themes from signals using OpenRouter AI
    */
-  async extractThemes(context: any): Promise<{ title: string; confidence: number }[]> {
+  async extractThemes(context: ExtractionContext): Promise<Theme[]> {
     const prompt = themeExtractionPrompt.build(context);
 
-    for (let attempt = 0; attempt < 3; attempt++) {
+    for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 30000);
+      const timeoutId = setTimeout(() => controller.abort(), TIMEOUT_MS);
 
       try {
         const response = await fetch(`${this.baseUrl}/chat/completions`, {
@@ -46,22 +52,48 @@ export class OpenRouterClient {
           })
         });
 
-        clearTimeout(timeoutId);
-
         if (!response.ok) {
-          const errorBody: any = await response.json().catch(() => ({ message: 'Unknown error' }));
-          throw new Error(`OpenRouter error (${response.status}): ${errorBody.message}`);
+          const errorBody = await response.json().catch(() => ({ message: 'Unknown error' })) as { message?: string };
+          throw new Error(`OpenRouter error ${response.status}: ${errorBody.message}`);
         }
 
-        const data: any = await response.json();
-        return data.choices[0].message.content ? JSON.parse(data.choices[0].message.content).themes : [];
-      } catch (error: any) {
+        const data = await response.json() as OpenRouterResponse;
+        const content = data.choices?.[0]?.message?.content;
+        if (!content) {
+          throw new Error('Invalid response: missing content');
+        }
+
+        const parsed = JSON.parse(content);
+        if (!parsed.themes || !Array.isArray(parsed.themes)) {
+          throw new Error('Invalid response: themes array missing');
+        }
+
+        return parsed.themes;
+      } catch (error) {
+        if (shouldRetry(error as Error, attempt)) {
+          const delay = Math.min(BASE_DELAY * 2 ** attempt, MAX_DELAY);
+          await new Promise(resolve => setTimeout(resolve, delay));
+          continue;
+        }
+        throw error;
+      } finally {
         clearTimeout(timeoutId);
-        if (attempt === 2) throw error;
-        const delay = Math.min(1000 * 2 ** attempt, 30000);
-        await new Promise(resolve => setTimeout(resolve, delay));
       }
     }
-    throw new Error('Should not reach here');
+    throw new Error('Max retries exceeded');
   }
+}
+
+function shouldRetry(error: Error, attempt: number): boolean {
+  if (attempt >= MAX_RETRIES - 1) return false;
+
+  // Network errors and 5xx are retryable
+  if (error.message.includes('aborted')) return true; // timeout
+  if (error.message.includes('OpenRouter error 5')) return true;
+
+  // Don't retry 4xx (client errors)
+  if (error.message.includes('OpenRouter error 4')) return false;
+
+  // For fetch rejections (network errors), retry
+  return true;
 }
