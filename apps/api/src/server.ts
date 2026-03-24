@@ -11,6 +11,7 @@ import { registerRoutes as registerSignals } from './routes/signals';
 import { registerRoutes as registerSynthesize } from './routes/synthesize';
 import { registerRoutes as registerAnalysis } from './routes/analysis';
 import './types/global'; // Import for side-effect type augmentation
+import './fastify-augmentation'; // Import to ensure augmentation is included
 
 export async function createServer() {
   const server = fastify({

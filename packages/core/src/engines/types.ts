@@ -26,6 +26,13 @@ export interface EffortResult {
   estimate: number; // days
 }
 
+export type RoadmapBucket = 'NOW' | 'NEXT' | 'LATER';
+
+export interface PriorityResult {
+  bucket: RoadmapBucket;
+  confidence: number; // 0-1
+}
+
 export interface PriorityResult {
   bucket: 'NOW' | 'NEXT' | 'LATER';
   confidence: number; // 0-1
