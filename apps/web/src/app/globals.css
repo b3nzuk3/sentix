@@ -1,0 +1,44 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 16 20 30;
+    --foreground: 248 250 252;
+    --primary: 59 130 246;
+    --primary-foreground: 255 255 255;
+    --accent: 6 182 212;
+    --accent-foreground: 16 20 30;
+    --muted: 30 41 59;
+    --muted-foreground: 148 163 184;
+    --card: 30 41 59;
+    --card-foreground: 248 250 252;
+    --border: 51 65 85;
+    --destructive: 239 68 68;
+    --success: 16 185 129;
+    --warning: 245 158 11;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  .glow:hover {
+    box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+  }
+  .glow:focus {
+    box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+  }
+}

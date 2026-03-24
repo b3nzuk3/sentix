@@ -1,6 +1,8 @@
 export interface Theme {
   title: string;
+  reason: string;
   confidence: number;
+  evidence?: string[];
 }
 
 export interface OpenRouterResponse {

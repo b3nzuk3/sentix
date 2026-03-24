@@ -1,0 +1,1 @@
+{"version":3,"file":"priorityEngine.d.ts","sourceRoot":"","sources":["priorityEngine.ts"],"names":[],"mappings":"AAAA,OAAO,EAAiB,cAAc,EAAE,MAAM,SAAS,CAAC;AAExD,UAAU,MAAM;IACd,YAAY,EAAE,MAAM,CAAC;IACrB,eAAe,EAAE,MAAM,CAAC;IACxB,iBAAiB,EAAE,MAAM,CAAC;IAC1B,aAAa,EAAE,MAAM,GAAG,QAAQ,GAAG,KAAK,CAAC;CAC1C;AAID;;;;;;;;;;GAUG;AACH,wBAAgB,MAAM,CAAC,MAAM,EAAE,MAAM,GAAG,cAAc,CA8BrD"}

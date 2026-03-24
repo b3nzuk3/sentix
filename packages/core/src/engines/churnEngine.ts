@@ -14,7 +14,7 @@ import { Signal, ChurnResult } from './types';
  * Formula: risk = min(1.0, (sum of weighted complaints) / threshold)
  * Threshold: 2 weighted complaints = risk 1.0 (full risk)
  */
-export function analyze(signals: Signal[]): ChurnResult {
+export function analyzeChurn(signals: Signal[]): ChurnResult {
   let weightedSum = 0;
 
   const severityWeights: Record<string, number> = {

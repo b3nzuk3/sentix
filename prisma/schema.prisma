@@ -222,3 +222,8 @@ enum ComponentStatus {
   STABLE
   DEPRECATED
 }
+
+// Seed configuration
+generator seed {
+  provider = "node ./prisma/seed.js"
+}

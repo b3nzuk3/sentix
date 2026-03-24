@@ -30,7 +30,7 @@ describe('OpenRouterClient', () => {
           message: {
             content: JSON.stringify({
               themes: [
-                { title: 'Test Theme', confidence: 0.9 }
+                { title: 'Test Theme', reason: 'Because it is a test', confidence: 0.9, evidence: ['signal-1'] }
               ]
             })
           }
@@ -52,7 +52,12 @@ describe('OpenRouterClient', () => {
     };
     const result = await client.extractThemes(context);
 
-    expect(result).toEqual([{ title: 'Test Theme', confidence: 0.9 }]);
+    expect(result).toEqual([{
+      title: 'Test Theme',
+      reason: 'Because it is a test',
+      confidence: 0.9,
+      evidence: ['signal-1']
+    }]);
     expect(global.fetch).toHaveBeenCalledTimes(1);
   });
 
@@ -251,7 +256,7 @@ describe('OpenRouterClient', () => {
               message: {
                 content: JSON.stringify({
                   themes: [
-                    { title: 'Retry Success', confidence: 0.95 }
+                    { title: 'Retry Success', reason: 'Retry worked', confidence: 0.95, evidence: [] }
                   ]
                 })
               }
@@ -274,7 +279,7 @@ describe('OpenRouterClient', () => {
 
     const result = await promise;
 
-    expect(result).toEqual([{ title: 'Retry Success', confidence: 0.95 }]);
+    expect(result).toEqual([{ title: 'Retry Success', reason: 'Retry worked', confidence: 0.95, evidence: [] }]);
     expect(global.fetch).toHaveBeenCalledTimes(2);
   });
 
@@ -357,7 +362,7 @@ describe('OpenRouterClient', () => {
           message: {
             content: JSON.stringify({
               themes: [
-                { title: 'Test Theme', confidence: 0.9 }
+                { title: 'Test Theme', reason: 'Test reason', confidence: 0.9, evidence: ['sig1'] }
               ]
             })
           }

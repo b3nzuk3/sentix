@@ -1,4 +1,4 @@
-import { analyze } from '../revenueEngine';
+import { analyzeRevenue } from '../revenueEngine';
 
 interface Signal {
   id: string;
@@ -43,17 +43,17 @@ describe('Revenue Engine', () => {
   ];
 
   it('extracts total lost revenue from signals', () => {
-    const result = analyze(signals as any);
+    const result = analyzeRevenue(signals as any);
     expect(result.total_lost).toBe(62500);
   });
 
   it('extracts revenue at risk from signals', () => {
-    const result = analyze(signals as any);
+    const result = analyzeRevenue(signals as any);
     expect(result.at_risk).toBe(0);
   });
 
   it('handles empty array', () => {
-    const result = analyze([] as any);
+    const result = analyzeRevenue([] as any);
     expect(result.total_lost).toBe(0);
     expect(result.at_risk).toBe(0);
   });
@@ -79,7 +79,7 @@ describe('Revenue Engine', () => {
         signal_type: 'QUESTION'
       }
     ];
-    const result = analyze(atRiskSignals as any);
+    const result = analyzeRevenue(atRiskSignals as any);
     expect(result.at_risk).toBe(35000);
     expect(result.total_lost).toBe(0);
   });
@@ -96,7 +96,7 @@ describe('Revenue Engine', () => {
         signal_type: 'BUG'
       }
     ];
-    const result = analyze(malformedSignals as any);
+    const result = analyzeRevenue(malformedSignals as any);
     expect(result.total_lost).toBe(0);
   });
 
@@ -112,7 +112,7 @@ describe('Revenue Engine', () => {
         signal_type: 'PRAISE'
       }
     ];
-    const result = analyze(noiseSignals as any);
+    const result = analyzeRevenue(noiseSignals as any);
     expect(result.total_lost).toBe(0);
     expect(result.at_risk).toBe(0);
   });

@@ -8,7 +8,7 @@ import { Signal, RevenueResult } from './types';
  *
  * Currency format: $1,234.56 or 1234.56 or $1234
  */
-export function analyze(signals: Signal[]): RevenueResult {
+export function analyzeRevenue(signals: Signal[]): RevenueResult {
   let totalLost = 0;
   let totalAtRisk = 0;
 

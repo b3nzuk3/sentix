@@ -1,4 +1,4 @@
-import { analyze } from '../churnEngine';
+import { analyzeChurn } from '../churnEngine';
 
 interface Signal {
   id: string;
@@ -52,7 +52,7 @@ describe('Churn Engine', () => {
       }
     ];
 
-    const result = analyze(signals as any);
+    const result = analyzeChurn(signals as any);
     // 1 critical (3x), 1 urgent (2x), 1 major (1.5x), 1 minor (1x) -> total weight = 7.5
     // Threshold normalization: assume threshold of 2 complains = 1.0 risk
     // Expected: min(1.0, 7.5 / 2) = 1.0 (capped at 1)
@@ -71,7 +71,7 @@ describe('Churn Engine', () => {
         signal_type: 'FEATURE_REQUEST'
       }
     ];
-    const result = analyze(signals as any);
+    const result = analyzeChurn(signals as any);
     expect(result.risk).toBe(0);
   });
 
@@ -87,13 +87,13 @@ describe('Churn Engine', () => {
         signal_type: 'COMPLAINT'
       }
     ];
-    const result = analyze(signals as any);
+    const result = analyzeChurn(signals as any);
     // Critical = 3x weight. Threshold 2 => 3/2 = 1.5 -> capped to 1.0
     expect(result.risk).toBeCloseTo(1.0, 1);
   });
 
   it('handles empty array', () => {
-    const result = analyze([] as any);
+    const result = analyzeChurn([] as any);
     expect(result.risk).toBe(0);
   });
 });
