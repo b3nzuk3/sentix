@@ -110,8 +110,8 @@ export async function registerRoutes(server: FastifyInstance) {
     });
   });
 
-  // GET /signals/:projectId - List signals for a project
-  server.get('/signals/:projectId', { preValidation: [server.authenticate] }, async (request: FastifyRequest, reply: FastifyReply) => {
+  // GET /projects/:projectId/signals - List signals for a project
+  server.get('/projects/:projectId/signals', { preValidation: [server.authenticate] }, async (request: FastifyRequest, reply: FastifyReply) => {
     const user = request.user as any;
     const { projectId } = request.params as { projectId: string };
     const { page = 1, limit = 50, source_type, account_name, from, to } = request.query as any;

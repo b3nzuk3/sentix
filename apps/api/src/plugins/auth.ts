@@ -7,53 +7,69 @@ import fastify from 'fastify';
 const plugin = async (fastify: any) => {
   // Register auth routes inline for simplicity
   fastify.post('/auth/register', async (request: any, reply: any) => {
-    const { email, password, org_name, user_name } = request.body;
+    try {
+      console.log('🔐 Register endpoint called. fastify.prisma is:', fastify.prisma);
+      const { email, password, org_name, user_name } = request.body;
 
-    const existing = await fastify.prisma.user.findUnique({ where: { email } });
-    if (existing) {
-      throw fastify.httpErrors.create(400, 'User already exists');
+      if (!fastify.prisma) {
+        console.error('❌ fastify.prisma is undefined! Fastify keys:', Object.keys(fastify));
+        throw new Error('Prisma not available');
+      }
+
+      const existing = await fastify.prisma.user.findUnique({ where: { email } });
+      if (existing) {
+        throw fastify.httpErrors.create(400, 'User already exists');
+      }
+
+      const password_hash = await bcrypt.hash(password, 10);
+
+      // Generate unique slug for organization by appending a random suffix
+      const baseSlug = org_name.toLowerCase().replace(/\s+/g, '-');
+      const randomSuffix = Math.random().toString(36).substring(2, 8);
+      const slug = `${baseSlug}-${randomSuffix}`;
+
+      const result = await fastify.prisma.$transaction(async (tx: any) => {
+        const org = await tx.organization.create({
+          data: {
+            name: org_name,
+            slug
+          }
+        });
+
+        const user = await tx.user.create({
+          data: {
+            email,
+            password_hash,
+            name: user_name,
+            organization_id: org.id,
+            role: 'ADMIN'
+          }
+        });
+
+        return { user, org };
+      });
+
+      const access_token = signAccessToken({
+        user_id: result.user.id,
+        org_id: result.org.id,
+        role: result.user.role
+      });
+
+      const refresh_token = signRefreshToken({
+        user_id: result.user.id,
+        org_id: result.org.id,
+        role: result.user.role
+      });
+
+      return reply.status(201).send({
+        user: { id: result.user.id, email: result.user.email, name: result.user.name, role: result.user.role },
+        org: { id: result.org.id, name: result.org.name, slug: result.org.slug },
+        tokens: { access_token, refresh_token }
+      });
+    } catch (err) {
+      console.error('❌ Register error:', err);
+      throw err;
     }
-
-    const password_hash = await bcrypt.hash(password, 10);
-
-    const result = await fastify.prisma.$transaction(async (tx: any) => {
-      const org = await tx.organization.create({
-        data: {
-          name: org_name,
-          slug: org_name.toLowerCase().replace(/\s+/g, '-')
-        }
-      });
-
-      const user = await tx.user.create({
-        data: {
-          email,
-          password_hash,
-          name: user_name,
-          organization_id: org.id,
-          role: 'ADMIN'
-        }
-      });
-
-      return { user, org };
-    });
-
-    const access_token = signAccessToken({
-      user_id: result.user.id,
-      org_id: result.org.id,
-      role: result.user.role
-    });
-
-    const refresh_token = signRefreshToken({
-      user_id: result.user.id,
-      org_id: result.org.id,
-      role: result.user.role
-    });
-
-    return reply.status(201).send({
-      user: { id: result.user.id, email: result.user.email, name: result.user.name, role: result.user.role },
-      org: { id: result.org.id, name: result.org.name, slug: result.org.slug },
-      tokens: { access_token, refresh_token }
-    });
   });
 
   fastify.post('/auth/login', async (request: any, reply: any) => {

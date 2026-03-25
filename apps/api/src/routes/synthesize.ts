@@ -8,11 +8,18 @@ export async function registerRoutes(server: FastifyInstance) {
     preValidation: [server.authenticate],
     schema: {
       body: {
-        project_id: true,
-        options: {
-          signal_limit: true,
-        },
-      },
+        type: 'object',
+        required: ['project_id'],
+        properties: {
+          project_id: { type: 'string' },
+          options: {
+            type: 'object',
+            properties: {
+              signal_limit: { type: 'number' }
+            }
+          }
+        }
+      }
     },
   }, async (request: FastifyRequest, reply: FastifyReply) => {
     const user = request.user as any;

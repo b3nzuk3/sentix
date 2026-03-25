@@ -42,8 +42,8 @@ test.describe('Signals', () => {
     expect(response.body.signals[0].text).toBe('Test signal content');
   });
 
-  test('GET /signals/:projectId returns signals', async () => {
-    const response = await request().get(`/signals/${projectId}`, {
+  test('GET /projects/:projectId/signals returns signals', async () => {
+    const response = await request().get(`/projects/${projectId}/signals`, {
       headers: authHeader(authToken)
     });
 

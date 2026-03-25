@@ -7,7 +7,7 @@ import fastifyHelmet from '@fastify/helmet';
 import fastifyRateLimit from '@fastify/rate-limit';
 import fastifyJwt from '@fastify/jwt';
 import fastifyMultipart from '@fastify/multipart';
-import PrismaPlugin from './plugins/prisma';
+import { PrismaClient } from '@prisma/client';
 import AuthPlugin from './plugins/auth';
 import { registerRoutes as registerProjects } from './routes/projects';
 import { registerRoutes as registerSignals } from './routes/signals';
@@ -41,9 +41,33 @@ export async function createServer() {
   });
   console.log('✅ fastify-jwt registered');
 
+  // Add authenticate hook
+  server.decorate('authenticate', async (request: any, reply: any) => {
+    try {
+      await request.jwtVerify();
+    } catch (err) {
+      reply.code(401).send({ error: 'Unauthorized' });
+    }
+  });
+
+  console.log('🔐 server.authenticate exists:', !!server.authenticate);
+
   await server.register(fastifyMultipart);
 
-  await server.register(PrismaPlugin);
+  // Set up Prisma directly on server to make it available to all plugins/routes
+  const prisma = new PrismaClient({
+    log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
+  });
+  server.decorate('prisma', prisma);
+  console.log('🔌 Prisma decorated server directly');
+  console.log('🔧 Prisma client model keys:', Object.keys(prisma).filter(k => typeof prisma[k] === 'object' && k !== '$$' && !k.startsWith('_')));
+
+  // Disconnect Prisma on server close
+  server.addHook('onClose', async () => {
+    await prisma.$disconnect();
+  });
+
+  // Register auth plugin (which will use server.prisma)
   await server.register(AuthPlugin);
 
   // Health check

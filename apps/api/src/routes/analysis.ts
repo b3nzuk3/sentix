@@ -1,8 +1,8 @@
 import type { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 
 export async function registerRoutes(server: FastifyInstance) {
-  // GET /analysis/:projectId - Latest completed Analysis with themes
-  server.get('/analysis/:projectId', { preValidation: [server.authenticate] }, async (request: FastifyRequest, reply: FastifyReply) => {
+  // GET /projects/:projectId/analysis - Latest completed Analysis with themes
+  server.get('/projects/:projectId/analysis', { preValidation: [server.authenticate] }, async (request: FastifyRequest, reply: FastifyReply) => {
     const user = request.user as any;
     const { projectId } = request.params as { projectId: string };
 

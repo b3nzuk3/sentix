@@ -23,8 +23,8 @@ test.describe('Analysis', () => {
     projectId = projRes.body.id;
   });
 
-  test('GET /analysis/:projectId returns 404 when no analysis exists', async () => {
-    const response = await request().get(`/analysis/${projectId}`, {
+  test('GET /projects/:projectId/analysis returns 404 when no analysis exists', async () => {
+    const response = await request().get(`/projects/${projectId}/analysis`, {
       headers: authHeader(authToken)
     });
     expect(response.status).toBe(404);

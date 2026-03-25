@@ -1,6 +1,4 @@
 import type { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
-import { ZodError } from 'zod';
-import { createProjectSchema, updateProjectSchema } from '../schemas/project';
 
 export async function registerRoutes(server: FastifyInstance) {
   // GET /projects - List projects user has access to
@@ -66,7 +64,17 @@ export async function registerRoutes(server: FastifyInstance) {
   // POST /projects - Create new project
   server.post('/projects', {
     preValidation: [server.authenticate],
-    schema: { body: createProjectSchema },
+    schema: {
+      body: {
+        type: 'object',
+        required: ['name'],
+        properties: {
+          name: { type: 'string', minLength: 1, maxLength: 100 },
+          description: { type: 'string', maxLength: 500 },
+          team_id: { type: 'string' }
+        }
+      }
+    },
   }, async (request: FastifyRequest, reply: FastifyReply) => {
     const user = request.user as any;
     const body = request.body as any;
@@ -96,7 +104,15 @@ export async function registerRoutes(server: FastifyInstance) {
   // PATCH /projects/:id - Update project
   server.patch('/projects/:id', {
     preValidation: [server.authenticate],
-    schema: { body: updateProjectSchema },
+    schema: {
+      body: {
+        type: 'object',
+        properties: {
+          name: { type: 'string', minLength: 1, maxLength: 100 },
+          description: { type: 'string', maxLength: 500 }
+        }
+      }
+    },
   }, async (request: FastifyRequest, reply: FastifyReply) => {
     const user = request.user as any;
     const { id } = request.params as { id: string };
