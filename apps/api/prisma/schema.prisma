@@ -82,6 +82,7 @@ model Signal {
   account_name    String?
   signal_type     SignalCategory?
   metadata        Json?
+  deleted_at      DateTime?
   created_at      DateTime @default(now())
 
   @@index([project_id, created_at])
@@ -95,6 +96,7 @@ model Theme {
   title           String
   summary         String?
   confidence      Float?
+  deleted_at      DateTime?
   analyses        AnalysisTheme[]  // Links from analyses
   created_at      DateTime @default(now())
 
@@ -149,6 +151,7 @@ model Persona {
   project         Project  @relation(fields: [project_id], references: [id])
   name            String
   description     String   @db.Text
+  deleted_at      DateTime?
   created_at      DateTime @default(now())
 
   @@index([project_id])
@@ -162,6 +165,7 @@ model ArchitectureComponent {
   description     String?  @db.Text
   version         String?
   status          ComponentStatus @default(STABLE)
+  deleted_at      DateTime?
   created_at      DateTime @default(now())
 
   @@index([project_id, status])
@@ -214,6 +218,7 @@ enum AnalysisStatus {
   PROCESSING
   COMPLETED
   FAILED
+  CANCELLED
 }
 
 enum ComponentStatus {
@@ -221,9 +226,4 @@ enum ComponentStatus {
   IN_DEVELOPMENT
   STABLE
   DEPRECATED
-}
-
-// Seed configuration
-generator seed {
-  provider = "node ./prisma/seed.js"
 }

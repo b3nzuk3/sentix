@@ -16,6 +16,7 @@ const projects_1 = require("./routes/projects");
 const signals_1 = require("./routes/signals");
 const synthesize_1 = require("./routes/synthesize");
 const analysis_1 = require("./routes/analysis");
+const admin_1 = require("./routes/admin");
 require("./types/global"); // Import for side-effect type augmentation
 require("./fastify-augmentation"); // Import to ensure augmentation is included
 async function createServer() {
@@ -48,6 +49,7 @@ async function createServer() {
     (0, signals_1.registerRoutes)(server);
     (0, synthesize_1.registerRoutes)(server);
     (0, analysis_1.registerRoutes)(server);
+    (0, admin_1.registerRoutes)(server);
     return server;
 }
 //# sourceMappingURL=server.js.map

@@ -1,8 +1,8 @@
-import { Queue, Worker, QueueScheduler } from 'bullmq';
-import { IORedis } from 'ioredis';
+import { Queue, Worker } from 'bullmq';
+import { Redis } from 'ioredis';
 import { SynthesizeJobData, IngestJobData } from './types';
 
-const connection = new IORedis({
+const connection = new Redis({
   host: process.env.REDIS_HOST || 'localhost',
   port: parseInt(process.env.REDIS_PORT || '6379', 10),
   maxRetriesPerRequest: null,
@@ -38,10 +38,6 @@ export const ingestQueue = new Queue<IngestJobData>('ingest', {
   },
 });
 
-// Required for delayed jobs and repeatable jobs
-export const queueScheduler = new QueueScheduler(['synthesize', 'ingest'], {
-  connection,
-});
 
 export function getConnection() {
   return connection;

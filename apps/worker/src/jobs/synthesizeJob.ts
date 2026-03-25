@@ -48,8 +48,10 @@ export async function processSynthesizeJob(job: Job<any>) {
         decisions: { orderBy: { created_at: 'desc' }, take: 20 },
         personas: { where: { deleted_at: null } },
         architectureComponents: {
-          where: { deleted_at: null },
-          status: { in: ['STABLE', 'IN_DEVELOPMENT'] }
+          where: {
+            deleted_at: null,
+            status: { in: ['STABLE', 'IN_DEVELOPMENT'] }
+          }
         }
       }
     });
@@ -68,18 +70,25 @@ export async function processSynthesizeJob(job: Job<any>) {
         id: s.id,
         text: s.text,
         source: s.source_type,
-        account: s.account_name
+        ...(s.account_name !== null && { account_name: s.account_name })
       })),
       existing_themes: project.themes.map(t => ({
         title: t.title,
-        summary: t.summary
+        summary: t.summary || ''
       })),
       past_decisions: project.decisions.map(d => ({
         title: d.title,
-        description: d.description
+        description: d.description || ''
       })),
-      personas: project.personas,
-      architectureComponents: project.architectureComponents
+      personas: project.personas.map(p => ({
+        name: p.name,
+        description: p.description || ''
+      })),
+      architectureComponents: project.architectureComponents.map(ac => ({
+        name: ac.name,
+        status: ac.status,
+        description: ac.description || ''
+      }))
     };
 
     // Check cancellation before expensive AI call
@@ -152,13 +161,24 @@ export async function processSynthesizeJob(job: Job<any>) {
 
       // Map back to full Signal objects from project.signals to include all fields (e.g., signal_type)
       const linkedSignalIds = new Set(linkedSignalRefs.map(s => s.id));
-      const supportingSignals = project.signals.filter(s => linkedSignalIds.has(s.id));
+      const supportingSignals = project.signals
+        .filter(s => linkedSignalIds.has(s.id))
+        .map(s => ({
+          id: s.id,
+          text: s.text,
+          account_name: s.account_name !== null ? s.account_name : undefined,
+          created_at: s.created_at,
+          project_id: s.project_id,
+          source_type: s.source_type,
+          signal_type: s.signal_type ?? undefined,
+          metadata: s.metadata as any
+        }));
 
       // Run engines in parallel
       const [revenue, churn, effort] = await Promise.all([
-        revenueEngine.analyzeRevenue(supportingSignals),
-        churnEngine.analyzeChurn(supportingSignals),
-        effortEngine.estimate(
+        analyzeRevenue(supportingSignals),
+        analyzeChurn(supportingSignals),
+        effortEstimate(
           { title: extractedTheme.title, summary: extractedTheme.reason },
           supportingSignals
         )

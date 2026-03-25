@@ -24,7 +24,7 @@ async function processSynthesizeJob(job) {
             return { analysis_id, status: 'cancelled' };
         }
         // --- Phase 1: Fetch project context (0-25%)
-        job.progress(1, totalPhases);
+        job.updateProgress({ current: 1, total: totalPhases });
         jobLogger.info('Phase: Fetching context', { phase: 1 });
         await db_1.prisma.analysis.update({
             where: { id: analysis_id },
@@ -78,7 +78,7 @@ async function processSynthesizeJob(job) {
             return { analysis_id, status: 'cancelled' };
         }
         // --- Phase 2: AI extraction (25-50%)
-        job.progress(2, totalPhases);
+        job.updateProgress({ current: 2, total: totalPhases });
         jobLogger.info('Phase: AI extraction', { signal_count: project.signals.length });
         const extractedThemes = await openRouterClient.extractThemes(context);
         // Check cancellation before engines
@@ -86,7 +86,7 @@ async function processSynthesizeJob(job) {
             return { analysis_id, status: 'cancelled' };
         }
         // --- Phase 3: Run deterministic engines (50-75%)
-        job.progress(3, totalPhases);
+        job.updateProgress({ current: 3, total: totalPhases });
         jobLogger.info('Phase: Running engines', { theme_count: extractedThemes.length });
         // Fetch existing themes for deduplication
         const existingThemes = await db_1.prisma.theme.findMany({
@@ -162,7 +162,7 @@ async function processSynthesizeJob(job) {
             });
         }
         // --- Phase 4: Persist results (75-100%)
-        job.progress(4, totalPhases);
+        job.updateProgress({ current: 4, total: totalPhases });
         jobLogger.info('Phase: Saving results', { theme_count: analysisThemesData.length });
         const total_revenue_lost = analysisThemesData.reduce((sum, t) => sum + (t.revenue_lost || 0), 0);
         const total_revenue_at_risk = analysisThemesData.reduce((sum, t) => sum + (t.revenue_at_risk || 0), 0);
@@ -175,7 +175,7 @@ async function processSynthesizeJob(job) {
                 themes: { create: analysisThemesData }
             }
         });
-        job.progress(totalPhases, totalPhases);
+        job.updateProgress({ current: totalPhases, total: totalPhases });
         jobLogger.info('Synthesis complete', { analysis_id, theme_count: analysisThemesData.length });
         return { analysis_id, theme_count: analysisThemesData.length };
     }

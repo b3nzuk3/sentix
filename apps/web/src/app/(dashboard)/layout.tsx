@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useAuthStore } from '@/stores/authStore';
-import { Header } '@/components/header';
+import { Header } from '@/components/header';
 interface DashboardLayoutProps {
   children: React.ReactNode;
 }
