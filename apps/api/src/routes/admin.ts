@@ -1,5 +1,9 @@
-import type { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
+import * as fastify from 'fastify';
 import { v4 as uuidv4 } from 'uuid';
+
+type FastifyInstance = fastify.FastifyInstance;
+type FastifyRequest = fastify.FastifyRequest;
+type FastifyReply = fastify.FastifyReply;
 
 export async function registerRoutes(server: FastifyInstance) {
   // GET /admin/queues - Queue statistics

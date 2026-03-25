@@ -5,6 +5,7 @@ interface SignalFile {
     buffer: Buffer;
     name: string;
     mimetype: string;
+    size: number;
   };
 }
 
@@ -213,7 +214,7 @@ export async function registerRoutes(server: FastifyInstance) {
       },
     });
 
-    const isReferenced = analysesWithSignal.some(at => {
+    const isReferenced = analysesWithSignal.some((at: any) => {
       const evidence = at.evidence_ids as string[] || [];
       return evidence.includes(id);
     });

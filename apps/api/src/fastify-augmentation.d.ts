@@ -31,3 +31,5 @@ declare module '@fastify/jwt' {
     };
   }
 }
+
+export {};
