@@ -7,11 +7,7 @@ import { z } from 'zod';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/stores/authStore';
 import { api } from '@/lib/api';
-import { Button } from '@sentix/ui/components/button';
-import { Input } from '@sentix/ui/components/input';
-import { Label } from '@sentix/ui/components/label';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@sentix/ui/components/card';
-import { Alert, AlertDescription } from '@sentix/ui/components/alert';
+import { Button, Input, Label, Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, Alert, AlertDescription } from '@sentix/ui';
 import { Loader2 } from 'lucide-react';
 
 const loginSchema = z.object({

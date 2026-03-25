@@ -6,10 +6,7 @@ import fastify from 'fastify';
 
 const plugin = async (fastify: any) => {
   // Register auth routes inline for simplicity
-  fastify.post('/auth/register', {
-    schema: { body: registerSchema },
-    preValidation: [fastify.authenticate.allowAnonymous]
-  }, async (request: any, reply: any) => {
+  fastify.post('/auth/register', async (request: any, reply: any) => {
     const { email, password, org_name, user_name } = request.body;
 
     const existing = await fastify.prisma.user.findUnique({ where: { email } });
@@ -59,10 +56,7 @@ const plugin = async (fastify: any) => {
     });
   });
 
-  fastify.post('/auth/login', {
-    schema: { body: loginSchema },
-    preValidation: [fastify.authenticate.allowAnonymous]
-  }, async (request: any, reply: any) => {
+  fastify.post('/auth/login', async (request: any, reply: any) => {
     const { email, password } = request.body;
 
     const user = await fastify.prisma.user.findUnique({ where: { email } });
@@ -102,10 +96,7 @@ const plugin = async (fastify: any) => {
     });
   });
 
-  fastify.post('/auth/refresh', {
-    schema: { body: refreshSchema },
-    preValidation: [fastify.authenticate.allowAnonymous]
-  }, async (request: any, reply: any) => {
+  fastify.post('/auth/refresh', async (request: any, reply: any) => {
     const { refresh_token } = request.body;
 
     try {

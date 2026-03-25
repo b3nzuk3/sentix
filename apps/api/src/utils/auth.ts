@@ -1,7 +1,5 @@
 import jwt from 'jsonwebtoken';
-import fastify = require('fastify');
-
-type FastifyRequest = fastify.FastifyRequest;
+import type { FastifyRequest } from 'fastify';
 
 export interface TokenPayload {
   user_id: string;

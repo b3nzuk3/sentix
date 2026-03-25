@@ -3,9 +3,9 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { api } from '@/lib/api';
-import { Button } from '@sentix/ui/components/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@sentix/ui/components/card';
-import { Skeleton } from '@sentix/ui/components/skeleton';
+import { Button } from '@sentix/ui';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@sentix/ui';
+import { Skeleton } from '@sentix/ui';
 import { Plus, Pencil, Trash2, Eye } from 'lucide-react';
 import type { Project } from '@sentix/types';
 

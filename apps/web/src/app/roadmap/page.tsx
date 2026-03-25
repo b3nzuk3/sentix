@@ -1,18 +1,18 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '@/lib/api';
 import { RoadmapColumn } from '@/components/roadmap/RoadmapColumn';
 import { TraceDrawer } from '@/components/roadmap/TraceDrawer';
-import { Button } from '@sentix/ui/components/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@sentix/ui/components/card';
-import { Skeleton } from '@sentix/ui/components/skeleton';
+import { Button } from '@sentix/ui';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@sentix/ui';
+import { Skeleton } from '@sentix/ui';
 import { Loader2 } from 'lucide-react';
 import type { Analysis, AnalysisTheme } from '@sentix/types';
 
-export default function RoadmapPage() {
+function RoadmapContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const analysisIdFromUrl = searchParams.get('analysis_id');
@@ -167,5 +167,17 @@ export default function RoadmapPage() {
         />
       )}
     </div>
+  );
+}
+
+export default function RoadmapPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center min-h-screen">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    }>
+      <RoadmapContent />
+    </Suspense>
   );
 }

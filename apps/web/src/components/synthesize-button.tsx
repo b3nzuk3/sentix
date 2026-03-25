@@ -3,9 +3,9 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { api } from '@/lib/api';
-import { Button } from '@sentix/ui/components/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@sentix/ui/components/card';
-import { Progress } from '@sentix/ui/components/progress';
+import { Button } from '@sentix/ui';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@sentix/ui';
+import { Progress } from '@sentix/ui';
 import { CheckCircle2, Loader2, AlertCircle } from 'lucide-react';
 
 interface SynthesizeButtonProps {

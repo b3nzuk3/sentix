@@ -1,7 +1,7 @@
 'use client';
 
 import { AnalysisTheme } from '@sentix/types';
-import { Button } from '@sentix/ui/components/button';
+import { Button } from '@sentix/ui';
 import { formatCurrency, getEffortBucketColor } from '@/lib/utils';
 import { BarChart3, Target, TrendingUp, TrendingDown, Clock, Eye } from 'lucide-react';
 

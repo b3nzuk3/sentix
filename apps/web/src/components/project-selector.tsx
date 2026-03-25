@@ -10,8 +10,8 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@sentix/ui/components/dropdown-menu';
-import { Button } from '@sentix/ui/components/button';
+} from '@sentix/ui';
+import { Button } from '@sentix/ui';
 import { Plus, Building } from 'lucide-react';
 
 export function ProjectSelector() {

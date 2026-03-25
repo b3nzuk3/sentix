@@ -3,10 +3,10 @@
 import { useQuery } from '@tanstack/react-query';
 import { api } from '@/lib/api';
 import { formatDate, formatCurrency, truncate } from '@/lib/utils';
-import { Button } from '@sentix/ui/components/button';
+import { Button } from '@sentix/ui';
 import { Eye } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { Skeleton } from '@sentix/ui/components/skeleton';
+import { Skeleton } from '@sentix/ui';
 
 interface RecentAnalysesProps {
   projectId: string;

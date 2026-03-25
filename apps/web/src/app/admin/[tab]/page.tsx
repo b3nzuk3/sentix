@@ -5,11 +5,11 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api';
 import { useAuthStore } from '@/stores/authStore';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@sentix/ui/components/tabs';
-import { Button } from '@sentix/ui/components/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@sentix/ui/components/card';
-import { Badge } from '@sentix/ui/components/badge';
-import { Skeleton } from '@sentix/ui/components/skeleton';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@sentix/ui';
+import { Button } from '@sentix/ui';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@sentix/ui';
+import { Badge } from '@sentix/ui';
+import { Skeleton } from '@sentix/ui';
 import { RefreshCw, Wrench, Activity, HardDrive } from 'lucide-react';
 
 const TABS = ['queues', 'health', 'stats'] as const;

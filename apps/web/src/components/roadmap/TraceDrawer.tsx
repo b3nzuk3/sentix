@@ -1,16 +1,16 @@
 'use client';
 
 import { useEffect } from 'react';
-import { Button } from '@sentix/ui/components/button';
+import { Button } from '@sentix/ui';
 import {
   Sheet,
   SheetContent,
   SheetHeader,
   SheetTitle,
   SheetDescription,
-} from '@sentix/ui/components/sheet';
-import { Separator } from '@sentix/ui/components/separator';
-import { Badge } from '@sentix/ui/components/badge';
+} from '@sentix/ui';
+import { Separator } from '@sentix/ui';
+import { Badge } from '@sentix/ui';
 import { formatCurrency, getEffortBucketColor } from '@/lib/utils';
 import {
   BarChart3,

@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/stores/authStore';
-import { Button } from '@sentix/ui/components/button';
+import { Button } from '@sentix/ui';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,8 +10,8 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@sentix/ui/components/dropdown-menu';
-import { Avatar, AvatarFallback, AvatarImage } from '@sentix/ui/components/avatar';
+} from '@sentix/ui';
+import { Avatar, AvatarFallback, AvatarImage } from '@sentix/ui';
 import { ProjectSelector } from './project-selector';
 import { LogOut, User, Building } from 'lucide-react';
 

@@ -4,15 +4,15 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api';
-import { Button } from '@sentix/ui/components/button';
-import { Input } from '@sentix/ui/components/input';
+import { Button } from '@sentix/ui';
+import { Input } from '@sentix/ui';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@sentix/ui/components/select';
+} from '@sentix/ui';
 import {
   Table,
   TableBody,
@@ -20,7 +20,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@sentix/ui/components/table';
+} from '@sentix/ui';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -30,9 +30,9 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@sentix/ui/components/alert-dialog';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@sentix/ui/components/card';
-import { Skeleton } from '@sentix/ui/components/skeleton';
+} from '@sentix/ui';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@sentix/ui';
+import { Skeleton } from '@sentix/ui';
 import { formatDate, truncate } from '@/lib/utils';
 import { Search, Trash2, Download, Filter } from 'lucide-react';
 import type { Signal } from '@sentix/types';

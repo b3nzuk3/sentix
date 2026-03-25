@@ -3,12 +3,12 @@
 import { useState, useRef } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api';
-import { Button } from '@sentix/ui/components/button';
-import { Input } from '@sentix/ui/components/input';
-import { Label } from '@sentix/ui/components/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@sentix/ui/components/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@sentix/ui/components/tabs';
-import { Skeleton } from '@sentix/ui/components/skeleton';
+import { Button } from '@sentix/ui';
+import { Input } from '@sentix/ui';
+import { Label } from '@sentix/ui';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@sentix/ui';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@sentix/ui';
+import { Skeleton } from '@sentix/ui';
 import { Upload, FileText, Trash2 } from 'lucide-react';
 import type { Signal } from '@sentix/types';
 
