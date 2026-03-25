@@ -10,6 +10,8 @@ declare module 'fastify' {
       organization_id: string;
       role: string;
     };
+    prisma: any;
+    redis: any;
   }
 
   interface FastifyFile {

@@ -1,6 +1,10 @@
-import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
+import fastify = require('fastify');
 import { v4 as uuidv4 } from 'uuid';
 import { synthesizeQueue } from '@sentix/queue';
+
+type FastifyInstance = fastify.FastifyInstance;
+type FastifyRequest = fastify.FastifyRequest;
+type FastifyReply = fastify.FastifyReply;
 
 export async function registerRoutes(server: FastifyInstance) {
   // POST /synthesize - Trigger synthesis job

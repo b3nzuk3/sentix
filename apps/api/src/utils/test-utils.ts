@@ -1,5 +1,7 @@
-import { FastifyInstance } from 'fastify';
+import fastify = require('fastify');
 import { createServer } from '../server';
+
+type FastifyInstance = fastify.FastifyInstance;
 
 let server: FastifyInstance | null = null;
 let serverPromise: Promise<FastifyInstance> | null = null;
@@ -8,10 +10,10 @@ export function getServer() {
   if (!serverPromise) {
     serverPromise = (async () => {
       server = await createServer();
-      return server;
+      return server!;
     })();
   }
-  return serverPromise;
+  return serverPromise!;
 }
 
 export function request() {

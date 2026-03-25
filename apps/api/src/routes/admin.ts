@@ -1,5 +1,9 @@
-import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
+import fastify = require('fastify');
 import { v4 as uuidv4 } from 'uuid';
+
+type FastifyInstance = fastify.FastifyInstance;
+type FastifyRequest = fastify.FastifyRequest;
+type FastifyReply = fastify.FastifyReply;
 
 export async function registerRoutes(server: FastifyInstance) {
   // GET /admin/queues - Queue statistics
@@ -58,7 +62,7 @@ export async function registerRoutes(server: FastifyInstance) {
 
     // Move all failed jobs back to waiting
     const failedJobs = await queue.getFailed();
-    const retryPromises = failedJobs.map(job => job.retry());
+    const retryPromises = failedJobs.map((job: any) => job.retry());
     await Promise.all(retryPromises);
 
     return reply.send({
@@ -68,7 +72,7 @@ export async function registerRoutes(server: FastifyInstance) {
   });
 
   // GET /admin/health - System health checks
-  server.get('/admin/health', { preValidation: [server.authenticate] }, async (request: FastifyReply) => {
+  server.get('/admin/health', { preValidation: [server.authenticate] }, async (request: FastifyRequest, reply: FastifyReply) => {
     const user = request.user as any;
     if (user.role !== 'ADMIN') {
       throw reply.code(403).send({ error: 'Forbidden', message: 'Admin access required' });

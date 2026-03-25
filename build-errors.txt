@@ -1,0 +1,169 @@
+
+> @sentix/api@0.1.0 build C:\Users\husse\Desktop\sentix_os\worktrees\implement\apps\api
+> tsc
+
+src/plugins/auth.ts(12,13): error TS7006: Parameter 'request' implicitly has an 'any' type.
+src/plugins/auth.ts(12,22): error TS7006: Parameter 'reply' implicitly has an 'any' type.
+src/plugins/auth.ts(22,61): error TS7006: Parameter 'tx' implicitly has an 'any' type.
+src/plugins/auth.ts(65,13): error TS7006: Parameter 'request' implicitly has an 'any' type.
+src/plugins/auth.ts(65,22): error TS7006: Parameter 'reply' implicitly has an 'any' type.
+src/plugins/auth.ts(108,13): error TS7006: Parameter 'request' implicitly has an 'any' type.
+src/plugins/auth.ts(108,22): error TS7006: Parameter 'reply' implicitly has an 'any' type.
+src/routes/admin.ts(6,10): error TS2339: Property 'get' does not exist on type 'FastifyInstance'.
+src/routes/admin.ts(11,19): error TS2339: Property 'code' does not exist on type 'FastifyReply'.
+src/routes/admin.ts(42,18): error TS2339: Property 'send' does not exist on type 'FastifyReply'.
+src/routes/admin.ts(46,10): error TS2339: Property 'post' does not exist on type 'FastifyInstance'.
+src/routes/admin.ts(48,35): error TS2339: Property 'params' does not exist on type 'FastifyRequest'.
+src/routes/admin.ts(51,19): error TS2339: Property 'code' does not exist on type 'FastifyReply'.
+src/routes/admin.ts(56,19): error TS2339: Property 'code' does not exist on type 'FastifyReply'.
+src/routes/admin.ts(61,42): error TS7006: Parameter 'job' implicitly has an 'any' type.
+src/routes/admin.ts(64,18): error TS2339: Property 'send' does not exist on type 'FastifyReply'.
+src/routes/admin.ts(71,10): error TS2339: Property 'get' does not exist on type 'FastifyInstance'.
+src/routes/admin.ts(72,26): error TS2339: Property 'user' does not exist on type 'FastifyReply'.
+src/routes/admin.ts(74,13): error TS2304: Cannot find name 'reply'.
+src/routes/admin.ts(83,21): error TS2339: Property 'prisma' does not exist on type 'FastifyReply'.
+src/routes/admin.ts(91,21): error TS2339: Property 'redis' does not exist on type 'FastifyReply'.
+src/routes/admin.ts(101,12): error TS2304: Cannot find name 'reply'.
+src/routes/admin.ts(105,10): error TS2339: Property 'get' does not exist on type 'FastifyInstance'.
+src/routes/admin.ts(108,19): error TS2339: Property 'code' does not exist on type 'FastifyReply'.
+src/routes/admin.ts(118,15): error TS2339: Property 'prisma' does not exist on type 'FastifyRequest'.
+src/routes/admin.ts(119,15): error TS2339: Property 'prisma' does not exist on type 'FastifyRequest'.
+src/routes/admin.ts(120,15): error TS2339: Property 'prisma' does not exist on type 'FastifyRequest'.
+src/routes/admin.ts(121,15): error TS2339: Property 'prisma' does not exist on type 'FastifyRequest'.
+src/routes/admin.ts(122,15): error TS2339: Property 'prisma' does not exist on type 'FastifyRequest'.
+src/routes/admin.ts(125,18): error TS2339: Property 'send' does not exist on type 'FastifyReply'.
+src/routes/analysis.ts(5,10): error TS2339: Property 'get' does not exist on type 'FastifyInstance'.
+src/routes/analysis.ts(7,35): error TS2339: Property 'params' does not exist on type 'FastifyRequest'.
+src/routes/analysis.ts(10,35): error TS2339: Property 'prisma' does not exist on type 'FastifyRequest'.
+src/routes/analysis.ts(15,19): error TS2339: Property 'code' does not exist on type 'FastifyReply'.
+src/routes/analysis.ts(18,36): error TS2339: Property 'prisma' does not exist on type 'FastifyRequest'.
+src/routes/analysis.ts(35,19): error TS2339: Property 'code' does not exist on type 'FastifyReply'.
+src/routes/analysis.ts(38,18): error TS2339: Property 'send' does not exist on type 'FastifyReply'.
+src/routes/analysis.ts(42,10): error TS2339: Property 'get' does not exist on type 'FastifyInstance'.
+src/routes/analysis.ts(44,35): error TS2339: Property 'params' does not exist on type 'FastifyRequest'.
+src/routes/analysis.ts(47,35): error TS2339: Property 'prisma' does not exist on type 'FastifyRequest'.
+src/routes/analysis.ts(52,19): error TS2339: Property 'code' does not exist on type 'FastifyReply'.
+src/routes/analysis.ts(55,36): error TS2339: Property 'prisma' does not exist on type 'FastifyRequest'.
+src/routes/analysis.ts(69,18): error TS2339: Property 'send' does not exist on type 'FastifyReply'.
+src/routes/analysis.ts(73,10): error TS2339: Property 'get' does not exist on type 'FastifyInstance'.
+src/routes/analysis.ts(75,28): error TS2339: Property 'params' does not exist on type 'FastifyRequest'.
+src/routes/analysis.ts(77,36): error TS2339: Property 'prisma' does not exist on type 'FastifyRequest'.
+src/routes/analysis.ts(90,19): error TS2339: Property 'code' does not exist on type 'FastifyReply'.
+src/routes/analysis.ts(94,19): error TS2339: Property 'code' does not exist on type 'FastifyReply'.
+src/routes/analysis.ts(97,18): error TS2339: Property 'send' does not exist on type 'FastifyReply'.
+src/routes/analysis.ts(101,10): error TS2339: Property 'delete' does not exist on type 'FastifyInstance'.
+src/routes/analysis.ts(103,28): error TS2339: Property 'params' does not exist on type 'FastifyRequest'.
+src/routes/analysis.ts(105,36): error TS2339: Property 'prisma' does not exist on type 'FastifyRequest'.
+src/routes/analysis.ts(113,19): error TS2339: Property 'code' does not exist on type 'FastifyReply'.
+src/routes/analysis.ts(117,19): error TS2339: Property 'code' does not exist on type 'FastifyReply'.
+src/routes/analysis.ts(121,19): error TS2339: Property 'prisma' does not exist on type 'FastifyRequest'.
+src/routes/analysis.ts(125,19): error TS2339: Property 'prisma' does not exist on type 'FastifyRequest'.
+src/routes/analysis.ts(129,18): error TS2339: Property 'code' does not exist on type 'FastifyReply'.
+src/routes/analysis.ts(133,10): error TS2339: Property 'get' does not exist on type 'FastifyInstance'.
+src/routes/analysis.ts(135,41): error TS2339: Property 'params' does not exist on type 'FastifyRequest'.
+src/routes/analysis.ts(137,41): error TS2339: Property 'prisma' does not exist on type 'FastifyRequest'.
+src/routes/analysis.ts(150,19): error TS2339: Property 'code' does not exist on type 'FastifyReply'.
+src/routes/analysis.ts(154,19): error TS2339: Property 'code' does not exist on type 'FastifyReply'.
+src/routes/analysis.ts(159,35): error TS2339: Property 'prisma' does not exist on type 'FastifyRequest'.
+src/routes/analysis.ts(166,18): error TS2339: Property 'send' does not exist on type 'FastifyReply'.
+src/routes/projects.ts(7,10): error TS2339: Property 'get' does not exist on type 'FastifyInstance'.
+src/routes/projects.ts(9,36): error TS2339: Property 'server' does not exist on type 'FastifyRequest'.
+src/routes/projects.ts(25,18): error TS2339: Property 'send' does not exist on type 'FastifyReply'.
+src/routes/projects.ts(29,10): error TS2339: Property 'get' does not exist on type 'FastifyInstance'.
+src/routes/projects.ts(31,28): error TS2339: Property 'params' does not exist on type 'FastifyRequest'.
+src/routes/projects.ts(33,35): error TS2339: Property 'server' does not exist on type 'FastifyRequest'.
+src/routes/projects.ts(56,19): error TS2339: Property 'code' does not exist on type 'FastifyReply'.
+src/routes/projects.ts(60,19): error TS2339: Property 'code' does not exist on type 'FastifyReply'.
+src/routes/projects.ts(63,18): error TS2339: Property 'send' does not exist on type 'FastifyReply'.
+src/routes/projects.ts(67,10): error TS2339: Property 'post' does not exist on type 'FastifyInstance'.
+src/routes/projects.ts(72,26): error TS2339: Property 'body' does not exist on type 'FastifyRequest'.
+src/routes/projects.ts(76,34): error TS2339: Property 'server' does not exist on type 'FastifyRequest'.
+src/routes/projects.ts(80,21): error TS2339: Property 'code' does not exist on type 'FastifyReply'.
+src/routes/projects.ts(84,35): error TS2339: Property 'server' does not exist on type 'FastifyRequest'.
+src/routes/projects.ts(93,18): error TS2339: Property 'status' does not exist on type 'FastifyReply'.
+src/routes/projects.ts(97,10): error TS2339: Property 'patch' does not exist on type 'FastifyInstance'.
+src/routes/projects.ts(102,28): error TS2339: Property 'params' does not exist on type 'FastifyRequest'.
+src/routes/projects.ts(103,26): error TS2339: Property 'body' does not exist on type 'FastifyRequest'.
+src/routes/projects.ts(105,36): error TS2339: Property 'server' does not exist on type 'FastifyRequest'.
+src/routes/projects.ts(110,19): error TS2339: Property 'code' does not exist on type 'FastifyReply'.
+src/routes/projects.ts(114,19): error TS2339: Property 'code' does not exist on type 'FastifyReply'.
+src/routes/projects.ts(117,35): error TS2339: Property 'server' does not exist on type 'FastifyRequest'.
+src/routes/projects.ts(122,18): error TS2339: Property 'send' does not exist on type 'FastifyReply'.
+src/routes/projects.ts(126,10): error TS2339: Property 'delete' does not exist on type 'FastifyInstance'.
+src/routes/projects.ts(128,28): error TS2339: Property 'params' does not exist on type 'FastifyRequest'.
+src/routes/projects.ts(130,36): error TS2339: Property 'server' does not exist on type 'FastifyRequest'.
+src/routes/projects.ts(135,19): error TS2339: Property 'code' does not exist on type 'FastifyReply'.
+src/routes/projects.ts(139,19): error TS2339: Property 'code' does not exist on type 'FastifyReply'.
+src/routes/projects.ts(142,19): error TS2339: Property 'server' does not exist on type 'FastifyRequest'.
+src/routes/projects.ts(146,18): error TS2339: Property 'code' does not exist on type 'FastifyReply'.
+src/routes/signals.ts(13,10): error TS2339: Property 'post' does not exist on type 'FastifyInstance'.
+src/routes/signals.ts(27,26): error TS2339: Property 'body' does not exist on type 'FastifyRequest'.
+src/routes/signals.ts(31,35): error TS2339: Property 'prisma' does not exist on type 'FastifyRequest'.
+src/routes/signals.ts(36,19): error TS2339: Property 'code' does not exist on type 'FastifyReply'.
+src/routes/signals.ts(54,27): error TS2339: Property 'size' does not exist on type '{ buffer: Buffer<ArrayBufferLike>; name: string; mimetype: string; }'.
+src/routes/signals.ts(55,23): error TS2339: Property 'code' does not exist on type 'FastifyReply'.
+src/routes/signals.ts(65,23): error TS2339: Property 'code' does not exist on type 'FastifyReply'.
+src/routes/signals.ts(95,19): error TS2339: Property 'code' does not exist on type 'FastifyReply'.
+src/routes/signals.ts(98,42): error TS2339: Property 'prisma' does not exist on type 'FastifyRequest'.
+src/routes/signals.ts(106,18): error TS2339: Property 'status' does not exist on type 'FastifyReply'.
+src/routes/signals.ts(113,10): error TS2339: Property 'get' does not exist on type 'FastifyInstance'.
+src/routes/signals.ts(115,35): error TS2339: Property 'params' does not exist on type 'FastifyRequest'.
+src/routes/signals.ts(116,83): error TS2339: Property 'query' does not exist on type 'FastifyRequest'.
+src/routes/signals.ts(119,35): error TS2339: Property 'prisma' does not exist on type 'FastifyRequest'.
+src/routes/signals.ts(124,19): error TS2339: Property 'code' does not exist on type 'FastifyReply'.
+src/routes/signals.ts(142,15): error TS2339: Property 'prisma' does not exist on type 'FastifyRequest'.
+src/routes/signals.ts(148,15): error TS2339: Property 'prisma' does not exist on type 'FastifyRequest'.
+src/routes/signals.ts(151,18): error TS2339: Property 'send' does not exist on type 'FastifyReply'.
+src/routes/signals.ts(163,10): error TS2339: Property 'get' does not exist on type 'FastifyInstance'.
+src/routes/signals.ts(165,28): error TS2339: Property 'params' does not exist on type 'FastifyRequest'.
+src/routes/signals.ts(167,34): error TS2339: Property 'prisma' does not exist on type 'FastifyRequest'.
+src/routes/signals.ts(172,19): error TS2339: Property 'code' does not exist on type 'FastifyReply'.
+src/routes/signals.ts(176,35): error TS2339: Property 'prisma' does not exist on type 'FastifyRequest'.
+src/routes/signals.ts(181,19): error TS2339: Property 'code' does not exist on type 'FastifyReply'.
+src/routes/signals.ts(184,18): error TS2339: Property 'send' does not exist on type 'FastifyReply'.
+src/routes/signals.ts(188,10): error TS2339: Property 'delete' does not exist on type 'FastifyInstance'.
+src/routes/signals.ts(190,28): error TS2339: Property 'params' does not exist on type 'FastifyRequest'.
+src/routes/signals.ts(192,34): error TS2339: Property 'prisma' does not exist on type 'FastifyRequest'.
+src/routes/signals.ts(200,19): error TS2339: Property 'code' does not exist on type 'FastifyReply'.
+src/routes/signals.ts(204,19): error TS2339: Property 'code' does not exist on type 'FastifyReply'.
+src/routes/signals.ts(208,46): error TS2339: Property 'prisma' does not exist on type 'FastifyRequest'.
+src/routes/signals.ts(216,50): error TS7006: Parameter 'at' implicitly has an 'any' type.
+src/routes/signals.ts(222,19): error TS2339: Property 'code' does not exist on type 'FastifyReply'.
+src/routes/signals.ts(228,19): error TS2339: Property 'prisma' does not exist on type 'FastifyRequest'.
+src/routes/signals.ts(232,18): error TS2339: Property 'code' does not exist on type 'FastifyReply'.
+src/routes/synthesize.ts(7,10): error TS2339: Property 'post' does not exist on type 'FastifyInstance'.
+src/routes/synthesize.ts(19,45): error TS2339: Property 'body' does not exist on type 'FastifyRequest'.
+src/routes/synthesize.ts(22,35): error TS2339: Property 'prisma' does not exist on type 'FastifyRequest'.
+src/routes/synthesize.ts(27,19): error TS2339: Property 'code' does not exist on type 'FastifyReply'.
+src/routes/synthesize.ts(31,36): error TS2339: Property 'prisma' does not exist on type 'FastifyRequest'.
+src/routes/synthesize.ts(45,18): error TS2339: Property 'status' does not exist on type 'FastifyReply'.
+src/routes/synthesize.ts(53,10): error TS2339: Property 'get' does not exist on type 'FastifyInstance'.
+src/routes/synthesize.ts(54,32): error TS2339: Property 'params' does not exist on type 'FastifyRequest'.
+src/routes/synthesize.ts(61,17): error TS2339: Property 'prisma' does not exist on type 'FastifyRequest'.
+src/routes/synthesize.ts(69,24): error TS2339: Property 'send' does not exist on type 'FastifyReply'.
+src/routes/synthesize.ts(75,24): error TS2339: Property 'send' does not exist on type 'FastifyReply'.
+src/routes/synthesize.ts(81,21): error TS2339: Property 'code' does not exist on type 'FastifyReply'.
+src/routes/synthesize.ts(84,19): error TS2339: Property 'code' does not exist on type 'FastifyReply'.
+src/routes/synthesize.ts(110,18): error TS2339: Property 'send' does not exist on type 'FastifyReply'.
+src/server.ts(18,18): error TS2349: This expression is not callable.
+  Type 'typeof import("fastify")' has no call signatures.
+src/server.ts(44,32): error TS7006: Parameter 'request' implicitly has an 'any' type.
+src/server.ts(44,41): error TS7006: Parameter 'reply' implicitly has an 'any' type.
+src/utils/auth.ts(26,25): error TS2339: Property 'headers' does not exist on type 'FastifyRequest'.
+src/utils/auth.ts(32,30): error TS2339: Property 'prisma' does not exist on type 'FastifyRequest'.
+src/utils/test-utils.ts(9,5): error TS2322: Type 'Promise<FastifyInstance | null>' is not assignable to type 'Promise<FastifyInstance>'.
+  Type 'FastifyInstance | null' is not assignable to type 'FastifyInstance'.
+    Type 'null' is not assignable to type 'FastifyInstance'.
+src/utils/test-utils.ts(20,46): error TS18047: 'fastifyPromise' is possibly 'null'.
+src/utils/test-utils.ts(20,85): error TS2339: Property 'inject' does not exist on type 'FastifyInstance'.
+src/utils/test-utils.ts(21,47): error TS18047: 'fastifyPromise' is possibly 'null'.
+src/utils/test-utils.ts(21,86): error TS2339: Property 'inject' does not exist on type 'FastifyInstance'.
+src/utils/test-utils.ts(22,46): error TS18047: 'fastifyPromise' is possibly 'null'.
+src/utils/test-utils.ts(22,85): error TS2339: Property 'inject' does not exist on type 'FastifyInstance'.
+src/utils/test-utils.ts(23,48): error TS18047: 'fastifyPromise' is possibly 'null'.
+src/utils/test-utils.ts(23,87): error TS2339: Property 'inject' does not exist on type 'FastifyInstance'.
+src/utils/test-utils.ts(24,49): error TS18047: 'fastifyPromise' is possibly 'null'.
+src/utils/test-utils.ts(24,88): error TS2339: Property 'inject' does not exist on type 'FastifyInstance'.
+C:\Users\husse\Desktop\sentix_os\worktrees\implement\apps\api:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @sentix/api@0.1.0 build: `tsc`
+Exit status 2

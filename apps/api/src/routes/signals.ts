@@ -1,4 +1,8 @@
-import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
+import fastify = require('fastify');
+
+type FastifyInstance = fastify.FastifyInstance;
+type FastifyRequest = fastify.FastifyRequest;
+type FastifyReply = fastify.FastifyReply;
 
 interface SignalFile {
   file: {

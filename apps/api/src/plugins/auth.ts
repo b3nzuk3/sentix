@@ -2,14 +2,14 @@ import { registerSchema, loginSchema, refreshSchema } from '../schemas/auth';
 import { signAccessToken, signRefreshToken } from '../utils/auth';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import fastify = require('fastify');
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const plugin: any = async (fastify: any) => {
+const plugin = async (fastify: fastify.FastifyInstance) => {
   // Register auth routes inline for simplicity
   fastify.post('/auth/register', {
     schema: { body: registerSchema },
     preValidation: [fastify.authenticate.allowAnonymous]
-  }, async (request, reply) => {
+  }, async (request: fastify.FastifyRequest, reply: fastify.FastifyReply) => {
     const { email, password, org_name, user_name } = request.body;
 
     const existing = await fastify.prisma.user.findUnique({ where: { email } });
@@ -19,7 +19,7 @@ const plugin: any = async (fastify: any) => {
 
     const password_hash = await bcrypt.hash(password, 10);
 
-    const result = await fastify.prisma.$transaction(async (tx) => {
+    const result = await fastify.prisma.$transaction(async (tx: any) => {
       const org = await tx.organization.create({
         data: {
           name: org_name,
@@ -62,7 +62,7 @@ const plugin: any = async (fastify: any) => {
   fastify.post('/auth/login', {
     schema: { body: loginSchema },
     preValidation: [fastify.authenticate.allowAnonymous]
-  }, async (request, reply) => {
+  }, async (request: fastify.FastifyRequest, reply: fastify.FastifyReply) => {
     const { email, password } = request.body;
 
     const user = await fastify.prisma.user.findUnique({ where: { email } });
@@ -105,7 +105,7 @@ const plugin: any = async (fastify: any) => {
   fastify.post('/auth/refresh', {
     schema: { body: refreshSchema },
     preValidation: [fastify.authenticate.allowAnonymous]
-  }, async (request, reply) => {
+  }, async (request: fastify.FastifyRequest, reply: fastify.FastifyReply) => {
     const { refresh_token } = request.body;
 
     try {
