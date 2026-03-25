@@ -2,14 +2,14 @@ import { registerSchema, loginSchema, refreshSchema } from '../schemas/auth';
 import { signAccessToken, signRefreshToken } from '../utils/auth';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import fastify = require('fastify');
+import fastify from 'fastify';
 
-const plugin = async (fastify: fastify.FastifyInstance) => {
+const plugin = async (fastify: any) => {
   // Register auth routes inline for simplicity
   fastify.post('/auth/register', {
     schema: { body: registerSchema },
     preValidation: [fastify.authenticate.allowAnonymous]
-  }, async (request: fastify.FastifyRequest, reply: fastify.FastifyReply) => {
+  }, async (request: any, reply: any) => {
     const { email, password, org_name, user_name } = request.body;
 
     const existing = await fastify.prisma.user.findUnique({ where: { email } });
@@ -62,7 +62,7 @@ const plugin = async (fastify: fastify.FastifyInstance) => {
   fastify.post('/auth/login', {
     schema: { body: loginSchema },
     preValidation: [fastify.authenticate.allowAnonymous]
-  }, async (request: fastify.FastifyRequest, reply: fastify.FastifyReply) => {
+  }, async (request: any, reply: any) => {
     const { email, password } = request.body;
 
     const user = await fastify.prisma.user.findUnique({ where: { email } });
@@ -105,7 +105,7 @@ const plugin = async (fastify: fastify.FastifyInstance) => {
   fastify.post('/auth/refresh', {
     schema: { body: refreshSchema },
     preValidation: [fastify.authenticate.allowAnonymous]
-  }, async (request: fastify.FastifyRequest, reply: fastify.FastifyReply) => {
+  }, async (request: any, reply: any) => {
     const { refresh_token } = request.body;
 
     try {

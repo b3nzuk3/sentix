@@ -1,8 +1,4 @@
-import fastify = require('fastify');
-
-type FastifyInstance = fastify.FastifyInstance;
-type FastifyRequest = fastify.FastifyRequest;
-type FastifyReply = fastify.FastifyReply;
+import type { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 
 export async function registerRoutes(server: FastifyInstance) {
   // GET /analysis/:projectId - Latest completed Analysis with themes

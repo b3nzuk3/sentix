@@ -1,10 +1,6 @@
-import fastify = require('fastify');
+import type { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import { ZodError } from 'zod';
 import { createProjectSchema, updateProjectSchema } from '../schemas/project';
-
-type FastifyInstance = fastify.FastifyInstance;
-type FastifyRequest = fastify.FastifyRequest;
-type FastifyReply = fastify.FastifyReply;
 
 export async function registerRoutes(server: FastifyInstance) {
   // GET /projects - List projects user has access to
