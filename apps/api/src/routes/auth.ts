@@ -1,7 +1,10 @@
 import type { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
-import { authService } from '../services/auth.service';
+import { createAuthService } from '../services/auth.service';
 
 export async function registerRoutes(server: FastifyInstance) {
+  // Create auth service with server's Prisma client
+  const authService = createAuthService(server.prisma);
+
   // POST /auth/register - Register new user and organization (public)
   server.post(
     '/auth/register',
@@ -24,6 +27,7 @@ export async function registerRoutes(server: FastifyInstance) {
 
       try {
         const result = await authService.register({ email, password, org_name, user_name });
+        console.log('✅ Register success:', { email, userId: result.user.id, orgId: result.org.id });
 
         return reply.status(201).send({
           user: result.user,
@@ -34,13 +38,13 @@ export async function registerRoutes(server: FastifyInstance) {
           },
         });
       } catch (err: any) {
+        console.error('❌ Register error:', err);
         if (err.statusCode) {
           return reply.code(err.statusCode).send({
             error: err.error,
             message: err.message,
           });
         }
-        console.error('❌ Register error:', err);
         throw err;
       }
     }
