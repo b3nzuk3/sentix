@@ -9,6 +9,7 @@ import fastifyJwt from '@fastify/jwt';
 import fastifyMultipart from '@fastify/multipart';
 import { PrismaClient } from '@prisma/client';
 import AuthPlugin from './plugins/auth';
+import errorHandler from './plugins/error-handler';
 import { registerRoutes as registerAuth } from './routes/auth';
 import { registerRoutes as registerProjects } from './routes/projects';
 import { registerRoutes as registerSignals } from './routes/signals';
@@ -69,6 +70,9 @@ export async function createServer() {
   // Register auth plugin and routes
   await server.register(AuthPlugin);
   registerAuth(server);
+
+  // Register global error handler (must be after routes to catch their errors, but before other plugins that might throw)
+  await server.register(errorHandler);
 
   // Register route groups
   registerProjects(server);
