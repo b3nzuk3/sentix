@@ -1,7 +1,7 @@
 import { Job } from 'bullmq';
 import { prisma } from '../db';
 import { OpenRouterClient } from '../clients/openRouter';
-import { SignalLinker, findSimilarTheme } from '@sentix/core';
+import { SignalLinker, findSimilarTheme, countEntities } from '@sentix/core';
 import {
   analyzeRevenue,
   analyzeChurn,
@@ -184,11 +184,16 @@ export async function processSynthesizeJob(job: Job<any>) {
         )
       ]);
 
+      // Count entities for priority weighting
+      const entities = countEntities(supportingSignals);
+
       const priority = priorityDecide({
         revenue_lost: revenue.total_lost,
         revenue_at_risk: revenue.at_risk,
         churn_probability: churn.risk,
-        effort_bucket: effort.bucket
+        effort_bucket: effort.bucket,
+        entityDealCount: entities.deals,
+        entityAccountCount: entities.accounts,
       });
 
       analysisThemesData.push({

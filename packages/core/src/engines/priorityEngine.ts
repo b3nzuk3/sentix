@@ -1,53 +1,77 @@
-import { RoadmapBucket, PriorityResult } from './types';
-
-interface Inputs {
-  revenue_lost: number;
-  revenue_at_risk: number;
-  churn_probability: number; // 0-1
-  effort_bucket: 'HIGH' | 'MEDIUM' | 'LOW';
-}
-
-// Result type exported via PriorityResult in types
+import { PriorityInputs, PriorityResult, RoadmapBucket } from './types';
 
 /**
- * Decides roadmap priority based on revenue impact, churn risk, and effort.
+ * Decides roadmap priority based on revenue impact, churn risk, effort, and entity metrics.
  *
- * Decision matrix (evaluated in order):
+ * Core decision matrix (evaluated in order):
  * 1. IF effort=LOW AND revenue_lost > 0 → NOW (0.9)
  * 2. IF revenue_lost ≥ 10000 → NOW (0.9)
  * 3. IF churn_probability ≥ 0.7 → NOW (0.8)
  * 4. IF revenue_at_risk ≥ 5000 → NEXT (0.7)
  * 5. IF effort=LOW → LATER (0.6)
  * 6. DEFAULT → LATER (0.5)
+ *
+ * Entity weighting (applied after base decision):
+ * - Confidence boosted based on deal count:
+ *   • ≥2 deals → high (0.95)
+ *   • 1 deal  → medium (0.75)
+ *   • 0 deals → low (0.4)
+ * - Priority bucket boosted:
+ *   • Any deals or accounts can upgrade LATER → NEXT
  */
-export function decide(inputs: Inputs): PriorityResult {
-  const { revenue_lost, revenue_at_risk, churn_probability, effort_bucket } = inputs;
+export function decide(inputs: PriorityInputs): PriorityResult {
+  const {
+    revenue_lost,
+    revenue_at_risk,
+    churn_probability,
+    effort_bucket,
+    entityDealCount = 0,
+    entityAccountCount = 0
+  } = inputs;
 
-  // Rule 1: Quick win (low effort + proven revenue impact)
+  // Base decision
+  let bucket: RoadmapBucket;
+  let baseConfidence: number;
+
+  // Rule 1: Quick win
   if (effort_bucket === 'LOW' && revenue_lost > 0) {
-    return { bucket: 'NOW', confidence: 0.9 };
+    bucket = 'NOW';
+    baseConfidence = 0.9;
+  }
+  // Rule 2: High lost revenue
+  else if (revenue_lost >= 10000) {
+    bucket = 'NOW';
+    baseConfidence = 0.9;
+  }
+  // Rule 3: High churn risk
+  else if (churn_probability >= 0.7) {
+    bucket = 'NOW';
+    baseConfidence = 0.8;
+  }
+  // Rule 4: At-risk revenue
+  else if (revenue_at_risk >= 5000) {
+    bucket = 'NEXT';
+    baseConfidence = 0.7;
+  }
+  // Rule 5: Low effort
+  else if (effort_bucket === 'LOW') {
+    bucket = 'LATER';
+    baseConfidence = 0.6;
+  }
+  // Rule 6: Default
+  else {
+    bucket = 'LATER';
+    baseConfidence = 0.5;
   }
 
-  // Rule 2: High lost revenue demands immediate attention
-  if (revenue_lost >= 10000) {
-    return { bucket: 'NOW', confidence: 0.9 };
+  // Apply entity-based confidence boost
+  const dealConfidence = entityDealCount >= 2 ? 0.95 : entityDealCount === 1 ? 0.75 : 0.4;
+  const confidence = Math.max(baseConfidence, dealConfidence);
+
+  // Apply entity-based bucket weighting
+  if ((entityDealCount > 0 || entityAccountCount > 0) && bucket === 'LATER') {
+    bucket = 'NEXT';
   }
 
-  // Rule 3: High churn risk is urgent
-  if (churn_probability >= 0.7) {
-    return { bucket: 'NOW', confidence: 0.8 };
-  }
-
-  // Rule 4: Significant at-risk revenue should be planned soon
-  if (revenue_at_risk >= 5000) {
-    return { bucket: 'NEXT', confidence: 0.7 };
-  }
-
-  // Rule 5: Low effort items without urgency can be done later
-  if (effort_bucket === 'LOW') {
-    return { bucket: 'LATER', confidence: 0.6 };
-  }
-
-  // Rule 6: Default is LATER with baseline confidence
-  return { bucket: 'LATER', confidence: 0.5 };
+  return { bucket, confidence };
 }

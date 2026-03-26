@@ -28,12 +28,16 @@ export interface EffortResult {
 
 export type RoadmapBucket = 'NOW' | 'NEXT' | 'LATER';
 
-export interface PriorityResult {
-  bucket: RoadmapBucket;
-  confidence: number; // 0-1
+export interface PriorityInputs {
+  revenue_lost: number;
+  revenue_at_risk: number;
+  churn_probability: number; // 0-1
+  effort_bucket: 'HIGH' | 'MEDIUM' | 'LOW';
+  entityDealCount?: number;
+  entityAccountCount?: number;
 }
 
 export interface PriorityResult {
-  bucket: 'NOW' | 'NEXT' | 'LATER';
+  bucket: RoadmapBucket;
   confidence: number; // 0-1
 }
