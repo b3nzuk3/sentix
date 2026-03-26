@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { parseSignalFile } from '../utils/signal-parser';
+import { parse } from '@sentix/core';
 
 export interface SignalsService {
   uploadSignals(
@@ -61,7 +61,7 @@ export function createSignalsService(prisma: PrismaClient): SignalsService {
           }
 
           const fileContent = fileData.file.buffer.toString('utf-8');
-          const records = parseSignalFile(fileContent, fileData.file.name);
+          const records = parse(fileContent, sourceType, fileData.file.name);
 
           if (records.length > MAX_RECORDS) {
             throw { statusCode: 400, error: 'TOO_MANY_RECORDS', message: 'Upload would exceed maximum record limit' };

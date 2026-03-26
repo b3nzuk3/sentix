@@ -1,10 +1,15 @@
+export interface ParsedSignal {
+  text: string;
+  source_type?: string;
+  account_name?: string;
+  metadata?: Record<string, any>;
+}
+
 /**
- * Parse uploaded signal file content (CSV, JSON, TXT)
+ * Generic parser for CSV, JSON, and TXT files
+ * Handles common formats as a fallback
  */
-export function parseSignalFile(
-  content: string,
-  filename: string
-): Array<{ text: string; source_type?: string; account_name?: string; metadata?: any }> {
+export function parseGeneric(content: string, filename: string, defaultSourceType?: string): ParsedSignal[] {
   const ext = filename.split('.').pop()?.toLowerCase();
 
   try {
@@ -14,21 +19,21 @@ export function parseSignalFile(
         return data
           .map((item: any) => ({
             text: item.text || item.content || item.message || '',
-            source_type: item.source_type,
+            source_type: item.source_type || defaultSourceType,
             account_name: item.account_name,
             metadata: item.metadata || item,
           }))
-          .filter((item: any) => item.text);
+          .filter(signal => signal.text);
       }
       // Single JSON object
       return [
         {
           text: data.text || data.content || data.message || '',
-          source_type: data.source_type,
+          source_type: data.source_type || defaultSourceType,
           account_name: data.account_name,
           metadata: data.metadata || data,
         },
-      ].filter((item: any) => item.text);
+      ].filter(signal => signal.text);
     }
 
     if (ext === 'csv') {
@@ -36,41 +41,41 @@ export function parseSignalFile(
       if (lines.length < 2) return [];
 
       // Check if first line is header
-      const headers = lines[0].split(',').map((h: string) => h.trim().toLowerCase());
+      const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
       const hasHeader = headers.includes('text') || headers.includes('content') || headers.includes('message');
 
       const records: any[] = [];
 
       if (hasHeader) {
         for (let i = 1; i < lines.length; i++) {
-          const values = lines[i].split(',').map((v: string) => v.trim().replace(/^"|"$/g, ''));
+          const values = lines[i].split(',').map(v => v.trim().replace(/^"|"$/g, ''));
           const obj: any = {};
-          headers.forEach((h: string, idx: number) => (obj[h] = values[idx]));
+          headers.forEach((h, idx) => obj[h] = values[idx]);
           records.push(obj);
         }
       } else {
         // Assume each line is a signal text
         return lines
-          .filter((line: string) => line.trim())
-          .map((line: string) => ({ text: line.trim() }));
+          .filter(line => line.trim())
+          .map(line => ({ text: line.trim(), source_type: defaultSourceType }));
       }
 
       return records
-        .map((item: any) => ({
-          text: item.text || item.content || item.message || '',
-          source_type: item.source_type,
-          account_name: item.account_name,
-          metadata: item,
+        .map(record => ({
+          text: record.text || record.content || record.message || '',
+          source_type: record.source_type || defaultSourceType,
+          account_name: record.account_name,
+          metadata: record,
         }))
-        .filter((item: any) => item.text);
+        .filter(signal => signal.text);
     }
 
-    // TXT or unknown - treat each non-empty line as a signal
+    // TXT or unknown - each non-empty line is a signal
     return content
       .split('\n')
-      .map((line: string) => line.trim())
-      .filter((line: string) => line)
-      .map((text: string) => ({ text }));
+      .map(line => line.trim())
+      .filter(line => line)
+      .map(text => ({ text, source_type: defaultSourceType }));
   } catch (error) {
     throw new Error(`Failed to parse ${filename}: ${error instanceof Error ? error.message : String(error)}`);
   }
