@@ -1,5 +1,7 @@
 import type { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import { createProjectsService } from '../services/projects.service';
+import { createProjectSchema, updateProjectSchema } from '../schemas/project';
+import { createValidator, getValidatedBody } from '../utils/validation';
 
 export async function registerRoutes(server: FastifyInstance) {
   const projectsService = createProjectsService(server.prisma);
@@ -21,41 +23,21 @@ export async function registerRoutes(server: FastifyInstance) {
 
   // POST /projects - Create new project
   server.post('/projects', {
-    preValidation: [server.authenticate],
-    schema: {
-      body: {
-        type: 'object',
-        required: ['name'],
-        properties: {
-          name: { type: 'string', minLength: 1, maxLength: 100 },
-          description: { type: 'string', maxLength: 500 },
-          team_id: { type: 'string' }
-        }
-      }
-    },
+    preValidation: [server.authenticate, createValidator(createProjectSchema, 'body')],
   }, async (request: FastifyRequest, reply: FastifyReply) => {
     const user = request.user as any;
-    const body = request.body as any;
+    const body = getValidatedBody<typeof createProjectSchema._type>(request);
     const project = await projectsService.createProject(user.organization_id, body);
     return reply.status(201).send(project);
   });
 
   // PATCH /projects/:id - Update project
   server.patch('/projects/:id', {
-    preValidation: [server.authenticate],
-    schema: {
-      body: {
-        type: 'object',
-        properties: {
-          name: { type: 'string', minLength: 1, maxLength: 100 },
-          description: { type: 'string', maxLength: 500 }
-        }
-      }
-    },
+    preValidation: [server.authenticate, createValidator(updateProjectSchema, 'body')],
   }, async (request: FastifyRequest, reply: FastifyReply) => {
     const user = request.user as any;
     const { id } = request.params as { id: string };
-    const body = request.body as any;
+    const body = getValidatedBody<typeof updateProjectSchema._type>(request);
     const project = await projectsService.updateProject(user.organization_id, id, body);
     return reply.send(project);
   });

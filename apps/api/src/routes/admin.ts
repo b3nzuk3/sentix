@@ -1,5 +1,7 @@
 import * as fastify from 'fastify';
 import { v4 as uuidv4 } from 'uuid';
+import { z } from 'zod';
+import { createValidator, getValidatedParams } from '../utils/validation';
 
 type FastifyInstance = fastify.FastifyInstance;
 type FastifyRequest = fastify.FastifyRequest;
@@ -47,9 +49,14 @@ export async function registerRoutes(server: FastifyInstance) {
   });
 
   // POST /admin/queues/:queueName/retry-failed - Retry failed jobs
-  server.post('/admin/queues/:queueName/retry-failed', { preValidation: [server.authenticate] }, async (request: FastifyRequest, reply: FastifyReply) => {
+  server.post('/admin/queues/:queueName/retry-failed', {
+    preValidation: [
+      server.authenticate,
+      createValidator(z.object({ queueName: z.string() }), 'params')
+    ]
+  }, async (request: FastifyRequest, reply: FastifyReply) => {
     const user = request.user as any;
-    const { queueName } = request.params as { queueName: string };
+    const { queueName } = getValidatedParams<{ queueName: string }>(request);
 
     if (user.role !== 'ADMIN') {
       throw reply.code(403).send({ error: 'Forbidden', message: 'Admin access required' });

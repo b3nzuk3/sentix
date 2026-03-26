@@ -1,32 +1,25 @@
 import type { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
-
-interface SignalFile {
-  file: {
-    buffer: Buffer;
-    name: string;
-    mimetype: string;
-    size: number;
-  };
-}
+import { z } from 'zod';
+import {
+  createValidator,
+  getValidatedBody,
+  getValidatedParams,
+  getValidatedQuery
+} from '../utils/validation';
+import {
+  uploadSignalsSchema,
+  signalQuerySchema,
+  projectIdParamSchema
+} from '../schemas/signal';
 
 export async function registerRoutes(server: FastifyInstance) {
   // POST /signals/upload - Upload signals via file or manual entry
   server.post('/signals/upload', {
-    preValidation: [server.authenticate],
-    schema: {
-      body: {
-        project_id: true,
-        source_type: true,
-        files: true,
-        text: true,
-        account_name: true,
-      },
-      multipart: true,
-    },
+    preValidation: [server.authenticate, createValidator(uploadSignalsSchema, 'body')],
+    multipart: true,
   }, async (request: FastifyRequest, reply: FastifyReply) => {
     const user = request.user as any;
-    const body = request.body as any;
-    const { project_id, source_type, files, text, account_name } = body;
+    const { project_id, source_type, files, text, account_name } = getValidatedBody<typeof uploadSignalsSchema._type>(request);
 
     // Verify project belongs to user's org
     const project = await request.prisma.project.findUnique({
@@ -111,10 +104,16 @@ export async function registerRoutes(server: FastifyInstance) {
   });
 
   // GET /projects/:projectId/signals - List signals for a project
-  server.get('/projects/:projectId/signals', { preValidation: [server.authenticate] }, async (request: FastifyRequest, reply: FastifyReply) => {
+  server.get('/projects/:projectId/signals', {
+    preValidation: [
+      server.authenticate,
+      createValidator(projectIdParamSchema, 'params'),
+      createValidator(signalQuerySchema, 'query')
+    ]
+  }, async (request: FastifyRequest, reply: FastifyReply) => {
     const user = request.user as any;
-    const { projectId } = request.params as { projectId: string };
-    const { page = 1, limit = 50, source_type, account_name, from, to } = request.query as any;
+    const { projectId } = getValidatedParams<typeof projectIdParamSchema._type>(request);
+    const { page = 1, limit = 50, source_type, account_name, from, to } = getValidatedQuery<typeof signalQuerySchema._type>(request);
 
     // Verify project belongs to user's org
     const project = await request.prisma.project.findUnique({
@@ -161,9 +160,14 @@ export async function registerRoutes(server: FastifyInstance) {
   });
 
   // GET /signals/:id - Get single signal
-  server.get('/signals/:id', { preValidation: [server.authenticate] }, async (request: FastifyRequest, reply: FastifyReply) => {
+  server.get('/signals/:id', {
+    preValidation: [
+      server.authenticate,
+      createValidator(z.object({ id: z.string() }), 'params')
+    ]
+  }, async (request: FastifyRequest, reply: FastifyReply) => {
     const user = request.user as any;
-    const { id } = request.params as { id: string };
+    const { id } = getValidatedParams<{ id: string }>(request);
 
     const signal = await request.prisma.signal.findUnique({
       where: { id },
@@ -186,9 +190,14 @@ export async function registerRoutes(server: FastifyInstance) {
   });
 
   // DELETE /signals/:id - Delete a signal
-  server.delete('/signals/:id', { preValidation: [server.authenticate] }, async (request: FastifyRequest, reply: FastifyReply) => {
+  server.delete('/signals/:id', {
+    preValidation: [
+      server.authenticate,
+      createValidator(z.object({ id: z.string() }), 'params')
+    ]
+  }, async (request: FastifyRequest, reply: FastifyReply) => {
     const user = request.user as any;
-    const { id } = request.params as { id: string };
+    const { id } = getValidatedParams<{ id: string }>(request);
 
     const signal = await request.prisma.signal.findUnique({
       where: { id },

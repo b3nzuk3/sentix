@@ -1,10 +1,17 @@
 import type { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
+import { z } from 'zod';
+import { createValidator, getValidatedParams } from '../utils/validation';
 
 export async function registerRoutes(server: FastifyInstance) {
   // GET /projects/:projectId/analysis - Latest completed Analysis with themes
-  server.get('/projects/:projectId/analysis', { preValidation: [server.authenticate] }, async (request: FastifyRequest, reply: FastifyReply) => {
+  server.get('/projects/:projectId/analysis', {
+    preValidation: [
+      server.authenticate,
+      createValidator(z.object({ projectId: z.string() }), 'params')
+    ]
+  }, async (request: FastifyRequest, reply: FastifyReply) => {
     const user = request.user as any;
-    const { projectId } = request.params as { projectId: string };
+    const { projectId } = getValidatedParams<{ projectId: string }>(request);
 
     // Verify project belongs to user's org
     const project = await request.prisma.project.findUnique({
@@ -39,9 +46,14 @@ export async function registerRoutes(server: FastifyInstance) {
   });
 
   // GET /analysis/history/:projectId - All analyses for a project
-  server.get('/analysis/history/:projectId', { preValidation: [server.authenticate] }, async (request: FastifyRequest, reply: FastifyReply) => {
+  server.get('/analysis/history/:projectId', {
+    preValidation: [
+      server.authenticate,
+      createValidator(z.object({ projectId: z.string() }), 'params')
+    ]
+  }, async (request: FastifyRequest, reply: FastifyReply) => {
     const user = request.user as any;
-    const { projectId } = request.params as { projectId: string };
+    const { projectId } = getValidatedParams<{ projectId: string }>(request);
 
     // Verify project belongs to user's org
     const project = await request.prisma.project.findUnique({
@@ -70,9 +82,14 @@ export async function registerRoutes(server: FastifyInstance) {
   });
 
   // GET /analysis/:id - Full analysis details
-  server.get('/analysis/:id', { preValidation: [server.authenticate] }, async (request: FastifyRequest, reply: FastifyReply) => {
+  server.get('/analysis/:id', {
+    preValidation: [
+      server.authenticate,
+      createValidator(z.object({ id: z.string() }), 'params')
+    ]
+  }, async (request: FastifyRequest, reply: FastifyReply) => {
     const user = request.user as any;
-    const { id } = request.params as { id: string };
+    const { id } = getValidatedParams<{ id: string }>(request);
 
     const analysis = await request.prisma.analysis.findUnique({
       where: { id },
@@ -98,9 +115,14 @@ export async function registerRoutes(server: FastifyInstance) {
   });
 
   // DELETE /analysis/:id - Delete analysis (soft-cascade: remove AnalysisTheme records)
-  server.delete('/analysis/:id', { preValidation: [server.authenticate] }, async (request: FastifyRequest, reply: FastifyReply) => {
+  server.delete('/analysis/:id', {
+    preValidation: [
+      server.authenticate,
+      createValidator(z.object({ id: z.string() }), 'params')
+    ]
+  }, async (request: FastifyRequest, reply: FastifyReply) => {
     const user = request.user as any;
-    const { id } = request.params as { id: string };
+    const { id } = getValidatedParams<{ id: string }>(request);
 
     const analysis = await request.prisma.analysis.findUnique({
       where: { id },
@@ -130,9 +152,14 @@ export async function registerRoutes(server: FastifyInstance) {
   });
 
   // GET /trace/:analysisThemeId - Traceability: show evidence for a roadmap item
-  server.get('/trace/:analysisThemeId', { preValidation: [server.authenticate] }, async (request: FastifyRequest, reply: FastifyReply) => {
+  server.get('/trace/:analysisThemeId', {
+    preValidation: [
+      server.authenticate,
+      createValidator(z.object({ analysisThemeId: z.string() }), 'params')
+    ]
+  }, async (request: FastifyRequest, reply: FastifyReply) => {
     const user = request.user as any;
-    const { analysisThemeId } = request.params as { analysisThemeId: string };
+    const { analysisThemeId } = getValidatedParams<{ analysisThemeId: string }>(request);
 
     const analysisTheme = await request.prisma.analysisTheme.findUnique({
       where: { id: analysisThemeId },

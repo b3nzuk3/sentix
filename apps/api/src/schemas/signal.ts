@@ -14,7 +14,21 @@ export const createSignalSchema = z.object({
 export const uploadSignalsSchema = z.object({
   project_id: z.string(),
   source_type: SignalSourceSchema,
-  files: z.array(z.instanceof(File)).optional(), // handled by multer
-  text: z.string().optional(), // for manual entry
+  // files validated manually for size/type; any shape accepted
+  files: z.any().optional(),
+  text: z.string().optional(),
   account_name: z.string().optional(),
+});
+
+export const signalQuerySchema = z.object({
+  page: z.number().int().positive().optional().default(1),
+  limit: z.number().int().positive().optional().default(50),
+  source_type: SignalSourceSchema.optional(),
+  account_name: z.string().optional(),
+  from: z.string().datetime().optional(),
+  to: z.string().datetime().optional(),
+});
+
+export const projectIdParamSchema = z.object({
+  projectId: z.string(),
 });

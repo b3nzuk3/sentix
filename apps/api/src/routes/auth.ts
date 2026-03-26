@@ -1,5 +1,7 @@
 import type { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import { createAuthService } from '../services/auth.service';
+import { registerSchema, loginSchema, refreshSchema } from '../schemas/auth';
+import { createValidator, getValidatedBody } from '../utils/validation';
 
 export async function registerRoutes(server: FastifyInstance) {
   // Create auth service with server's Prisma client
@@ -9,21 +11,10 @@ export async function registerRoutes(server: FastifyInstance) {
   server.post(
     '/auth/register',
     {
-      schema: {
-        body: {
-          type: 'object',
-          required: ['email', 'password', 'org_name', 'user_name'],
-          properties: {
-            email: { type: 'string', format: 'email' },
-            password: { type: 'string', minLength: 8 },
-            org_name: { type: 'string', minLength: 1, maxLength: 100 },
-            user_name: { type: 'string', minLength: 1, maxLength: 100 },
-          },
-        },
-      },
+      preValidation: [createValidator(registerSchema, 'body')],
     },
     async (request: FastifyRequest, reply: FastifyReply) => {
-      const { email, password, org_name, user_name } = request.body as any;
+      const { email, password, org_name, user_name } = getValidatedBody<typeof registerSchema._type>(request);
 
       try {
         const result = await authService.register({ email, password, org_name, user_name });
@@ -54,19 +45,10 @@ export async function registerRoutes(server: FastifyInstance) {
   server.post(
     '/auth/login',
     {
-      schema: {
-        body: {
-          type: 'object',
-          required: ['email', 'password'],
-          properties: {
-            email: { type: 'string', format: 'email' },
-            password: { type: 'string' },
-          },
-        },
-      },
+      preValidation: [createValidator(loginSchema, 'body')],
     },
     async (request: FastifyRequest, reply: FastifyReply) => {
-      const { email, password } = request.body as any;
+      const { email, password } = getValidatedBody<typeof loginSchema._type>(request);
 
       try {
         const result = await authService.login(email, password);
@@ -96,18 +78,10 @@ export async function registerRoutes(server: FastifyInstance) {
   server.post(
     '/auth/refresh',
     {
-      schema: {
-        body: {
-          type: 'object',
-          required: ['refresh_token'],
-          properties: {
-            refresh_token: { type: 'string' },
-          },
-        },
-      },
+      preValidation: [createValidator(refreshSchema, 'body')],
     },
     async (request: FastifyRequest, reply: FastifyReply) => {
-      const { refresh_token } = request.body as any;
+      const { refresh_token } = getValidatedBody<typeof refreshSchema._type>(request);
 
       try {
         const result = await authService.refresh(refresh_token);

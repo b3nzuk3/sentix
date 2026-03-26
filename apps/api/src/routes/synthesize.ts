@@ -1,29 +1,17 @@
 import type { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import { v4 as uuidv4 } from 'uuid';
+import { z } from 'zod';
 import { synthesizeQueue } from '@sentix/queue';
+import { synthesizeSchema } from '../schemas/analysis';
+import { createValidator, getValidatedBody, getValidatedParams } from '../utils/validation';
 
 export async function registerRoutes(server: FastifyInstance) {
   // POST /synthesize - Trigger synthesis job
   server.post('/synthesize', {
-    preValidation: [server.authenticate],
-    schema: {
-      body: {
-        type: 'object',
-        required: ['project_id'],
-        properties: {
-          project_id: { type: 'string' },
-          options: {
-            type: 'object',
-            properties: {
-              signal_limit: { type: 'number' }
-            }
-          }
-        }
-      }
-    },
+    preValidation: [server.authenticate, createValidator(synthesizeSchema, 'body')],
   }, async (request: FastifyRequest, reply: FastifyReply) => {
     const user = request.user as any;
-    const { project_id, options } = request.body as any;
+    const { project_id, options } = getValidatedBody<typeof synthesizeSchema._type>(request);
 
     // Verify project belongs to user's org
     const project = await request.prisma.project.findUnique({
@@ -57,8 +45,13 @@ export async function registerRoutes(server: FastifyInstance) {
   });
 
   // GET /synthesize/:job_id - Poll job status
-  server.get('/synthesize/:job_id', { preValidation: [server.authenticate] }, async (request: FastifyRequest, reply: FastifyReply) => {
-    const { job_id } = request.params as { job_id: string };
+  server.get('/synthesize/:job_id', {
+    preValidation: [
+      server.authenticate,
+      createValidator(z.object({ job_id: z.string() }), 'params')
+    ]
+  }, async (request: FastifyRequest, reply: FastifyReply) => {
+    const { job_id } = getValidatedParams<{ job_id: string }>(request);
 
     const job = await synthesizeQueue.getJob(job_id);
 
