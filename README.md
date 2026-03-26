@@ -100,21 +100,32 @@ OPENROUTER_API_KEY=your-key-here
 ```
 sentix/
 ├── apps/
-│   ├── api/           # Fastify backend API
-│   │   └── prisma/    # Database schema & seed (per-app location)
-│   ├── web/           # Next.js frontend
-│   └── worker/        # BullMQ worker service
+│   ├── api/                     # Fastify backend API
+│   │   ├── prisma/              # Database schema & seed
+│   │   ├── schemas/             # Zod validation schemas (auth, project, signal, analysis, etc.)
+│   │   └── src/
+│   │       ├── routes/          # HTTP route handlers
+│   │       ├── services/        # Business orchestration
+│   │       └── utils/           # Helpers (validation, test-utils)
+│   ├── web/                     # Next.js frontend
+│   └── worker/                  # BullMQ worker service
 ├── packages/
-│   ├── core/          # Deterministic engines (revenue, churn, effort, priority)
-│   ├── prompts/       # AI prompt templates
-│   ├── queue/         # BullMQ queue definitions
-│   ├── types/         # Shared TypeScript types
-│   └── ui/            # Shared UI components (@sentix/ui)
-├── infra/             # Docker compose and deployment
-└── docs/              # Specifications and documentation
+│   ├── core/                    # Deterministic engines & business logic
+│   │   ├── engines/             # Revenue, Churn, Effort, Priority, Confidence engines
+│   │   ├── entities/            # Entity builders and transformations
+│   │   ├── linking/             # SignalLinker (TF-IDF + cosine similarity)
+│   │   └── parsers/             # Signal parsers (Jira, etc.)
+│   ├── prompts/                 # AI prompt templates
+│   ├── queue/                   # BullMQ queue definitions
+│   ├── types/                   # Shared TypeScript types
+│   └── ui/                      # Shared UI components
+├── infra/                       # Docker compose and deployment
+├── scripts/                     # Build and verification scripts
+│   └── checkArtifacts.js       # Ensures no build artifacts in src/
+└── docs/                        # Specifications and documentation
 ```
 
-**Note:** The Prisma schema is located in `apps/api/prisma/` (not root). This follows the pattern of each app managing its own dependencies.
+**Note:** Each app manages its own dependencies (Prisma schema in `apps/api/prisma/`). Deterministic business logic lives in `@sentix/core` for testability and reuse.
 
 ## Architecture
 
@@ -187,20 +198,25 @@ sentix/
 ## Testing
 
 ```bash
-# Run all tests
+# Run all tests (turbo runs across all packages)
 pnpm test
 
 # Run tests for specific package
-pnpm --filter @sentix/api test
-pnpm --filter @sentix/worker test
-pnpm --filter @sentix/web test
+pnpm --filter @sentix/core test     # Deterministic engines (no DB required)
+pnpm --filter @sentix/worker test   # Worker service (no DB required)
+pnpm --filter @sentix/api test      # API integration tests (requires PostgreSQL)
 
 # Type checking
 pnpm typecheck
 
 # Linting
 pnpm lint
+
+# Verify no build artifacts in source
+pnpm check:build-artifacts
 ```
+
+**Note:** API integration tests require a running PostgreSQL database. The test infrastructure automatically truncates all tables before each test to ensure isolation. See [infra/docker](infra/docker) for database setup.
 
 ## Deployment
 
