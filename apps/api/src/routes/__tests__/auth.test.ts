@@ -12,6 +12,10 @@ test.describe('Authentication', () => {
       }
     });
 
+    if (response.status !== 201) {
+      console.error('Register failed:', response.status, response.body);
+    }
+
     expect(response.status).toBe(201);
     expect(response.body).toHaveProperty('user');
     expect(response.body).toHaveProperty('org');
@@ -99,11 +103,25 @@ test.describe('Authentication', () => {
         user_name: 'Test User'
       }
     });
-    const refreshToken = registerRes.body.tokens.refresh_token;
+
+    if (registerRes.status !== 201) {
+      console.error('Register failed:', registerRes.status, registerRes.body);
+    }
+    expect(registerRes.status).toBe(201);
+
+    const refreshToken = registerRes.body.tokens?.refresh_token;
+    if (!refreshToken) {
+      console.error('No refresh token in response:', registerRes.body);
+    }
+    expect(refreshToken).toBeDefined();
 
     const response = await request().post('/auth/refresh', {
       body: { refresh_token: refreshToken }
     });
+
+    if (response.status !== 200) {
+      console.error('Refresh failed:', response.status, response.body);
+    }
 
     expect(response.status).toBe(200);
     expect(response.body).toHaveProperty('tokens');
