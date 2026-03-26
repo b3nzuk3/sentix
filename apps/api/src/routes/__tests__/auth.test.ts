@@ -1,7 +1,6 @@
-import { test, expect } from '@playwright/test';
 import { request, authHeader } from '../../utils/test-utils';
 
-test.describe('Authentication', () => {
+describe('Authentication', () => {
   test('POST /auth/register creates org and user', async () => {
     const response = await request().post('/auth/register', {
       body: {

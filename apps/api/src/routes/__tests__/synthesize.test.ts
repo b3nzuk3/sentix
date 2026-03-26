@@ -1,11 +1,10 @@
-import { test, expect } from '@playwright/test';
 import { request, authHeader } from '../../utils/test-utils';
 
-test.describe('Synthesize', () => {
+describe('Synthesize', () => {
   let authToken: string;
   let projectId: string;
 
-  test.beforeAll(async () => {
+  beforeAll(async () => {
     const res = await request().post('/auth/register', {
       body: {
         email: 'synth@example.com',

@@ -1,7 +1,6 @@
 {
   "name": "@sentix/api",
   "version": "0.1.0",
-  "type": "module",
   "main": "dist/server.js",
   "prisma": {
     "schema": "./prisma/schema.prisma"
@@ -12,7 +11,7 @@
     "start": "node dist/server.js",
     "lint": "eslint src/",
     "typecheck": "tsc --noEmit",
-    "test": "playwright test",
+    "test": "jest",
     "prisma": "prisma",
     "db:seed": "tsx prisma/seed.ts",
     "prisma:generate": "cross-env PRISMA_GENERATE_SKIP_AUTOINSTALL=1 prisma generate"
@@ -40,7 +39,6 @@
     "zod": "^3.22.0"
   },
   "devDependencies": {
-    "@playwright/test": "^1.58.0",
     "@sentix/core": "workspace:*",
     "@sentix/prompts": "workspace:*",
     "@sentix/queue": "workspace:*",

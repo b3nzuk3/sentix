@@ -58,13 +58,19 @@ export function createAnalysisService(prisma: PrismaClient): AnalysisService {
           status: true,
           total_revenue_lost: true,
           total_revenue_at_risk: true,
-          theme_count: true,
           created_at: true,
           updated_at: true,
+          _count: {
+            select: { themes: true }
+          }
         },
       });
 
-      return analyses;
+      // Add theme_count based on count of related themes
+      return analyses.map(a => ({
+        ...a,
+        theme_count: a._count.themes
+      }));
     },
 
     async getAnalysis(organizationId, analysisId) {

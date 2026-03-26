@@ -15,6 +15,7 @@
     "clean": "turbo clean && rm -rf node_modules",
     "db:push": "pnpm --filter @sentix/api db:push",
     "db:seed": "pnpm --filter @sentix/api db:seed",
+    "check:build-artifacts": "node scripts/checkArtifacts.js",
     "prepare": "husky"
   },
   "devDependencies": {

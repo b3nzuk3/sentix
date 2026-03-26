@@ -1,7 +1,7 @@
 import type { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
-import { z } from 'zod';
 import { createValidator, getValidatedParams } from '../utils/validation';
 import { createAnalysisService } from '../services/analysis.service';
+import { projectIdParamSchema, analysisIdParamSchema, analysisThemeIdParamSchema } from '../schemas/analysis';
 
 export async function registerRoutes(server: FastifyInstance) {
   const analysisService = createAnalysisService(server.prisma);
@@ -10,11 +10,11 @@ export async function registerRoutes(server: FastifyInstance) {
   server.get('/projects/:projectId/analysis', {
     preValidation: [
       server.authenticate,
-      createValidator(z.object({ projectId: z.string() }), 'params')
+      createValidator(projectIdParamSchema, 'params')
     ]
   }, async (request: FastifyRequest, reply: FastifyReply) => {
     const user = request.user as any;
-    const { projectId } = getValidatedParams<{ projectId: string }>(request);
+    const { projectId } = getValidatedParams<typeof projectIdParamSchema._type>(request);
 
     const analysis = await analysisService.getLatestAnalysis(user.organization_id, projectId);
     return reply.send(analysis);
@@ -24,11 +24,11 @@ export async function registerRoutes(server: FastifyInstance) {
   server.get('/analysis/history/:projectId', {
     preValidation: [
       server.authenticate,
-      createValidator(z.object({ projectId: z.string() }), 'params')
+      createValidator(projectIdParamSchema, 'params')
     ]
   }, async (request: FastifyRequest, reply: FastifyReply) => {
     const user = request.user as any;
-    const { projectId } = getValidatedParams<{ projectId: string }>(request);
+    const { projectId } = getValidatedParams<typeof projectIdParamSchema._type>(request);
 
     const analyses = await analysisService.getAnalysisHistory(user.organization_id, projectId);
     return reply.send(analyses);
@@ -38,11 +38,11 @@ export async function registerRoutes(server: FastifyInstance) {
   server.get('/analysis/:id', {
     preValidation: [
       server.authenticate,
-      createValidator(z.object({ id: z.string() }), 'params')
+      createValidator(analysisIdParamSchema, 'params')
     ]
   }, async (request: FastifyRequest, reply: FastifyReply) => {
     const user = request.user as any;
-    const { id } = getValidatedParams<{ id: string }>(request);
+    const { id } = getValidatedParams<typeof analysisIdParamSchema._type>(request);
 
     const analysis = await analysisService.getAnalysis(user.organization_id, id);
     return reply.send(analysis);
@@ -52,11 +52,11 @@ export async function registerRoutes(server: FastifyInstance) {
   server.delete('/analysis/:id', {
     preValidation: [
       server.authenticate,
-      createValidator(z.object({ id: z.string() }), 'params')
+      createValidator(analysisIdParamSchema, 'params')
     ]
   }, async (request: FastifyRequest, reply: FastifyReply) => {
     const user = request.user as any;
-    const { id } = getValidatedParams<{ id: string }>(request);
+    const { id } = getValidatedParams<typeof analysisIdParamSchema._type>(request);
 
     await analysisService.deleteAnalysis(user.organization_id, id);
     return reply.code(204).send();
@@ -66,11 +66,11 @@ export async function registerRoutes(server: FastifyInstance) {
   server.get('/trace/:analysisThemeId', {
     preValidation: [
       server.authenticate,
-      createValidator(z.object({ analysisThemeId: z.string() }), 'params')
+      createValidator(analysisThemeIdParamSchema, 'params')
     ]
   }, async (request: FastifyRequest, reply: FastifyReply) => {
     const user = request.user as any;
-    const { analysisThemeId } = getValidatedParams<{ analysisThemeId: string }>(request);
+    const { analysisThemeId } = getValidatedParams<typeof analysisThemeIdParamSchema._type>(request);
 
     const trace = await analysisService.getTrace(user.organization_id, analysisThemeId);
     return reply.send(trace);

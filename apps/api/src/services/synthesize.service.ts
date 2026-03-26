@@ -27,7 +27,7 @@ export function createSynthesizeService(prisma: PrismaClient): SynthesizeService
       // Create Analysis record
       const analysis = await prisma.analysis.create({
         data: {
-          project_id,
+          project_id: projectId,
           status: 'PENDING',
         },
       });
@@ -35,12 +35,12 @@ export function createSynthesizeService(prisma: PrismaClient): SynthesizeService
       // Enqueue job
       const job = await synthesizeQueue.add('process', {
         analysis_id: analysis.id,
-        project_id,
+        project_id: projectId,
         user_id: userId,
       });
 
       return {
-        job_id: job.id,
+        job_id: job.id!,
         analysis_id: analysis.id,
         status: 'queued',
       };

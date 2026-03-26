@@ -1,6 +1,6 @@
 import type { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import { z } from 'zod';
-import { synthesizeSchema } from '../schemas/analysis';
+import { synthesizeSchema, jobIdParamSchema } from '../schemas/synthesize';
 import { createValidator, getValidatedBody, getValidatedParams } from '../utils/validation';
 import { createSynthesizeService } from '../services/synthesize.service';
 
@@ -22,7 +22,7 @@ export async function registerRoutes(server: FastifyInstance) {
   server.get('/synthesize/:job_id', {
     preValidation: [
       server.authenticate,
-      createValidator(z.object({ job_id: z.string() }), 'params')
+      createValidator(jobIdParamSchema, 'params')
     ]
   }, async (request: FastifyRequest, reply: FastifyReply) => {
     const user = request.user as any;

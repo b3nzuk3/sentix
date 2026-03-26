@@ -1,4 +1,3 @@
-import { test, expect } from '@playwright/test';
 import { request } from '../../utils/test-utils';
 
 test('GET /health returns ok', async () => {

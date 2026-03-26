@@ -16,7 +16,7 @@ export function parseJira(content: string): ParsedSignal[] {
     .map((issue: any) => {
       const fields = issue.fields || issue;
       const text = `${fields.summary || ''}\n${fields.description || ''}`.trim();
-      const reporter = fields.reporter || field;
+      const reporter = fields.reporter || {};
       return {
         text,
         source_type: 'JIRA',

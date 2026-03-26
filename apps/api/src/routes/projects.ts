@@ -1,7 +1,7 @@
 import type { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import { createProjectsService } from '../services/projects.service';
-import { createProjectSchema, updateProjectSchema } from '../schemas/project';
-import { createValidator, getValidatedBody } from '../utils/validation';
+import { createProjectSchema, updateProjectSchema, projectIdParamSchema } from '../schemas/project';
+import { createValidator, getValidatedBody, getValidatedParams } from '../utils/validation';
 
 export async function registerRoutes(server: FastifyInstance) {
   const projectsService = createProjectsService(server.prisma);
@@ -14,9 +14,11 @@ export async function registerRoutes(server: FastifyInstance) {
   });
 
   // GET /projects/:id - Get project with details
-  server.get('/projects/:id', { preValidation: [server.authenticate] }, async (request: FastifyRequest, reply: FastifyReply) => {
+  server.get('/projects/:id', {
+    preValidation: [server.authenticate, createValidator(projectIdParamSchema, 'params')]
+  }, async (request: FastifyRequest, reply: FastifyReply) => {
     const user = request.user as any;
-    const { id } = request.params as { id: string };
+    const { id } = getValidatedParams<typeof projectIdParamSchema._type>(request);
     const project = await projectsService.getProject(user.organization_id, id);
     return reply.send(project);
   });
@@ -33,19 +35,21 @@ export async function registerRoutes(server: FastifyInstance) {
 
   // PATCH /projects/:id - Update project
   server.patch('/projects/:id', {
-    preValidation: [server.authenticate, createValidator(updateProjectSchema, 'body')],
+    preValidation: [server.authenticate, createValidator(projectIdParamSchema, 'params'), createValidator(updateProjectSchema, 'body')],
   }, async (request: FastifyRequest, reply: FastifyReply) => {
     const user = request.user as any;
-    const { id } = request.params as { id: string };
+    const { id } = getValidatedParams<typeof projectIdParamSchema._type>(request);
     const body = getValidatedBody<typeof updateProjectSchema._type>(request);
     const project = await projectsService.updateProject(user.organization_id, id, body);
     return reply.send(project);
   });
 
   // DELETE /projects/:id - Delete project
-  server.delete('/projects/:id', { preValidation: [server.authenticate] }, async (request: FastifyRequest, reply: FastifyReply) => {
+  server.delete('/projects/:id', {
+    preValidation: [server.authenticate, createValidator(projectIdParamSchema, 'params')]
+  }, async (request: FastifyRequest, reply: FastifyReply) => {
     const user = request.user as any;
-    const { id } = request.params as { id: string };
+    const { id } = getValidatedParams<typeof projectIdParamSchema._type>(request);
     await projectsService.deleteProject(user.organization_id, id);
     return reply.code(204).send();
   });

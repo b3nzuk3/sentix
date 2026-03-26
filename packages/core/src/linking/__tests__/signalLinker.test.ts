@@ -1,4 +1,4 @@
-import { SignalLinker } from '../signalLinker';
+import { SignalLinker } from '../theme-linker';
 
 describe('SignalLinker', () => {
   let linker: SignalLinker;
@@ -263,7 +263,7 @@ describe('SignalLinker', () => {
 
       const signals = Array.from({ length: 30 }, (_, i) => ({
         id: `${i}`,
-        text: i % 2 === 0 ? 'Authentication and login errors' : 'Random unrelated signal'
+        text: i % 2 === 0 ? 'Authentication issue' : 'Random unrelated signal'
       }));
 
       const result = linker.linkSignals(theme, signals);

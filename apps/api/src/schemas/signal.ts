@@ -32,3 +32,7 @@ export const signalQuerySchema = z.object({
 export const projectIdParamSchema = z.object({
   projectId: z.string(),
 });
+
+export const signalIdParamSchema = z.object({
+  id: z.string(),
+});

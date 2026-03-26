@@ -1,7 +1,6 @@
 import * as fastify from 'fastify';
-import { v4 as uuidv4 } from 'uuid';
-import { z } from 'zod';
 import { createValidator, getValidatedParams } from '../utils/validation';
+import { queueNameParamSchema } from '../schemas/admin';
 
 type FastifyInstance = fastify.FastifyInstance;
 type FastifyRequest = fastify.FastifyRequest;
@@ -52,11 +51,11 @@ export async function registerRoutes(server: FastifyInstance) {
   server.post('/admin/queues/:queueName/retry-failed', {
     preValidation: [
       server.authenticate,
-      createValidator(z.object({ queueName: z.string() }), 'params')
+      createValidator(queueNameParamSchema, 'params')
     ]
   }, async (request: FastifyRequest, reply: FastifyReply) => {
     const user = request.user as any;
-    const { queueName } = getValidatedParams<{ queueName: string }>(request);
+    const { queueName } = getValidatedParams<typeof queueNameParamSchema._type>(request);
 
     if (user.role !== 'ADMIN') {
       throw reply.code(403).send({ error: 'Forbidden', message: 'Admin access required' });
@@ -97,12 +96,16 @@ export async function registerRoutes(server: FastifyInstance) {
       health.database = { status: 'unhealthy', error: String(e) };
     }
 
-    // Check Redis
-    try {
-      await request.redis.ping();
-      health.redis = { status: 'healthy' };
-    } catch (e) {
-      health.redis = { status: 'unhealthy', error: String(e) };
+    // Check Redis (if configured)
+    if (request.redis) {
+      try {
+        await request.redis.ping();
+        health.redis = { status: 'healthy' };
+      } catch (e) {
+        health.redis = { status: 'unhealthy', error: String(e) };
+      }
+    } else {
+      health.redis = { status: 'unavailable', error: 'Redis not configured' };
     }
 
     // Check worker (simple heartbeat check)

@@ -5,11 +5,13 @@ export interface ParsedSignal {
   metadata?: Record<string, any>;
 }
 
-export { parseHubspot } from './hubspot.parser';
-export { parseZendesk } from './zendesk.parser';
-export { parseJira } from './jira.parser';
-export { parseTranscript } from './transcript.parser';
-export { parseGeneric } from './generic.parser';
+import { parseHubspot } from './hubspot.parser';
+import { parseZendesk } from './zendesk.parser';
+import { parseJira } from './jira.parser';
+import { parseTranscript } from './transcript.parser';
+import { parseGeneric } from './generic.parser';
+
+export { parseHubspot, parseZendesk, parseJira, parseTranscript, parseGeneric };
 
 /**
  * Parse content based on source type

@@ -1,4 +1,5 @@
 import { PriorityInputs, PriorityResult, RoadmapBucket } from './types';
+import { calculateConfidence } from './confidenceEngine';
 
 /**
  * Decides roadmap priority based on revenue impact, churn risk, effort, and entity metrics.
@@ -64,8 +65,12 @@ export function decide(inputs: PriorityInputs): PriorityResult {
     baseConfidence = 0.5;
   }
 
-  // Apply entity-based confidence boost
-  const dealConfidence = entityDealCount >= 2 ? 0.95 : entityDealCount === 1 ? 0.75 : 0.4;
+  // Apply entity-based confidence boost using ConfidenceEngine
+  const { score: dealConfidence } = calculateConfidence({
+    affectedDeals: entityDealCount,
+    affectedAccounts: entityAccountCount,
+    mentions: entityDealCount + entityAccountCount // approximate; actual signal count would be passed separately
+  });
   const confidence = Math.max(baseConfidence, dealConfidence);
 
   // Apply entity-based bucket weighting

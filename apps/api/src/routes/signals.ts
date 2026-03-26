@@ -9,7 +9,8 @@ import {
 import {
   uploadSignalsSchema,
   signalQuerySchema,
-  projectIdParamSchema
+  projectIdParamSchema,
+  signalIdParamSchema
 } from '../schemas/signal';
 import { createSignalsService } from '../services/signals.service';
 
@@ -64,11 +65,11 @@ export async function registerRoutes(server: FastifyInstance) {
   server.get('/signals/:id', {
     preValidation: [
       server.authenticate,
-      createValidator(z.object({ id: z.string() }), 'params')
+      createValidator(signalIdParamSchema, 'params')
     ]
   }, async (request: FastifyRequest, reply: FastifyReply) => {
     const user = request.user as any;
-    const { id } = getValidatedParams<{ id: string }>(request);
+    const { id } = getValidatedParams<typeof signalIdParamSchema._type>(request);
 
     const signal = await signalsService.getSignal(user.organization_id, id);
     return reply.send(signal);
@@ -78,11 +79,11 @@ export async function registerRoutes(server: FastifyInstance) {
   server.delete('/signals/:id', {
     preValidation: [
       server.authenticate,
-      createValidator(z.object({ id: z.string() }), 'params')
+      createValidator(signalIdParamSchema, 'params')
     ]
   }, async (request: FastifyRequest, reply: FastifyReply) => {
     const user = request.user as any;
-    const { id } = getValidatedParams<{ id: string }>(request);
+    const { id } = getValidatedParams<typeof signalIdParamSchema._type>(request);
 
     await signalsService.deleteSignal(user.organization_id, id);
     return reply.code(204).send();

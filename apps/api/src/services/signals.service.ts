@@ -29,6 +29,8 @@ export interface SignalsService {
   deleteSignal(organizationId: string, signalId: string): Promise<void>;
 }
 
+import { SignalSource } from '@prisma/client';
+
 export function createSignalsService(prisma: PrismaClient): SignalsService {
   const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
   const MAX_RECORDS = 10000;
@@ -46,7 +48,7 @@ export function createSignalsService(prisma: PrismaClient): SignalsService {
 
       const signalsToCreate: Array<{
         project_id: string;
-        source_type: string;
+        source_type: SignalSource;
         text: string;
         account_name?: string;
         metadata?: any;
@@ -70,7 +72,7 @@ export function createSignalsService(prisma: PrismaClient): SignalsService {
           for (const record of records) {
             signalsToCreate.push({
               project_id: projectId,
-              source_type: record.source_type || sourceType,
+              source_type: (record.source_type || sourceType) as SignalSource,
               text: record.text,
               account_name: record.account_name || accountName,
               metadata: record.metadata ? { ...record.metadata, uploaded_filename: fileData.file.name } : { uploaded_filename: fileData.file.name },
@@ -83,7 +85,7 @@ export function createSignalsService(prisma: PrismaClient): SignalsService {
       if (text) {
         signalsToCreate.push({
           project_id: projectId,
-          source_type: sourceType,
+          source_type: sourceType as SignalSource,
           text,
           account_name: accountName,
           metadata: { manual_entry: true },
