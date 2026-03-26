@@ -1,3 +1,7 @@
+/**
+ * SignalLinker: associates signals with themes based on semantic similarity
+ * Uses TF-IDF vectorization and cosine similarity
+ */
 export class SignalLinker {
   private stopWords: Set<string>;
   private stemCache: Map<string, string> = new Map();
@@ -87,31 +91,29 @@ export class SignalLinker {
 
     // Common suffixes to remove (in order of decreasing length)
     const suffixes = [
-      'ization', 'isation',      // -> ize
-      'ational', 'ation', 'icator', 'ication', // added ication for authentication->auth
-      'fulness',                 // -> full
-      'ousness', 'osity',        // -> ous, ose
-      'iveness', 'ivity',        // -> ive
-      'fulness',                 // -> ful
-      'alistic',                 // -> al
-      'ically',                  // -> ic
-      'icator', 'ication',       // for words like certification, authentication
-      'ement', 'ance', 'ence',   // remove
-      'ability', 'ibility',      // -> able, ible
-      'antly', 'ently',          // -> ant, ent
-      'ator', 'or', 'er',        // remove (agent nouns)
-      'alism', 'ism',            // remove
-      'ness',                    // remove
-      'ment',                    // remove
-      'ent', 'ant',              // remove
-      'ship',                    // remove
-      'ing',                     // remove
-      'ed',                      // remove
-      'ly',                      // remove
-      'es', 's',                 // remove plural
+      'ization', 'isation',
+      'ational', 'ation', 'icator', 'ication',
+      'fulness',
+      'ousness', 'osity',
+      'iveness', 'ivity',
+      'alistic',
+      'ically',
+      'icator', 'ication',
+      'ement', 'ance', 'ence',
+      'ability', 'ibility',
+      'antly', 'ently',
+      'ator', 'or', 'er',
+      'alism', 'ism',
+      'ness',
+      'ment',
+      'ent', 'ant',
+      'ship',
+      'ing',
+      'ed',
+      'ly',
+      'es', 's',
     ];
 
-    // Apply suffix removal iteratively until no more matches
     let changed = true;
     while (changed) {
       changed = false;
@@ -119,13 +121,12 @@ export class SignalLinker {
         if (stemmed.length > suffix.length + 2 && stemmed.endsWith(suffix)) {
           stemmed = stemmed.slice(0, -suffix.length);
 
-          // Handle doubling (e.g., "running" -> "runn" -> "run")
           if (stemmed.length > 1 && stemmed[stemmed.length - 1] === stemmed[stemmed.length - 2]) {
             stemmed = stemmed.slice(0, -1);
           }
 
           changed = true;
-          break; // restart from the first suffix
+          break;
         }
       }
     }
@@ -139,7 +140,6 @@ export class SignalLinker {
     const N = docs.length;
     const docFrequency = new Map<string, number>();
 
-    // Count document frequency for each term
     for (const doc of docs) {
       const uniqueTerms = new Set(doc);
       for (const term of uniqueTerms) {
@@ -147,7 +147,6 @@ export class SignalLinker {
       }
     }
 
-    // Compute IDF: log(N / (1 + df(t)))
     for (const [term, df] of docFrequency.entries()) {
       idf.set(term, Math.log(N / (1 + df)));
     }
@@ -163,15 +162,13 @@ export class SignalLinker {
       return tfidf;
     }
 
-    // Count term frequencies
     const termFreq = new Map<string, number>();
     for (const token of tokens) {
       termFreq.set(token, (termFreq.get(token) || 0) + 1);
     }
 
-    // Compute normalized TF * IDF
     for (const [term, freq] of termFreq.entries()) {
-      const tf = freq / docLength; // Normalize by document length
+      const tf = freq / docLength;
       const idfVal = idf.get(term) || 0;
       tfidf.set(term, tf * idfVal);
     }
@@ -184,7 +181,6 @@ export class SignalLinker {
     let normA = 0;
     let normB = 0;
 
-    // Compute dot product and norms
     for (const [term, valA] of vecA.entries()) {
       normA += valA * valA;
       const valB = vecB.get(term) || 0;
@@ -195,7 +191,6 @@ export class SignalLinker {
       normB += valB * valB;
     }
 
-    // Avoid division by zero
     const denominator = Math.sqrt(normA) * Math.sqrt(normB);
     if (denominator === 0) {
       return 0;
